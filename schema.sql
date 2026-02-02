@@ -12,7 +12,7 @@ CREATE TABLE country (
 
 CREATE TABLE magnitude_type (
     magnitude_type_id SMALLINT PRIMARY KEY,
-    magnitude_type_name VARCHAR(255)
+    magnitude_type_name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE earthquake_location (
