@@ -111,5 +111,4 @@ terraform.*
 
 pipeline/*.csv
 dashboard/*.csv
-archive/*.csv
 *.csv
