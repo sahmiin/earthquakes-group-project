@@ -7,7 +7,7 @@ CREATE DATABASE earthquakes;
 
 CREATE TABLE country (
     country_id SMALLINT PRIMARY KEY,
-    country_name VARCHAR(255)
+    country_name UNIQUE VARCHAR(255)
 );
 
 CREATE TABLE earthquake_type (
@@ -20,13 +20,6 @@ CREATE TABLE earthquake_location (
     longitude FLOAT NOT NULL,
     latitude FLOAT NOT NULL,
     country_id REFERENCES earthquake_type(country_id)
-);
-
-CREATE TABLE earthquake_magnitude (
-    earthquake_magnitude_id SMALLINT PRIMARY KEY,
-    magnitude_value FLOAT NOT NULL,
-    uncertainty FLOAT,
-    earthquake_type_id REFERENCES earthquake_type(earthquake_type_id)
 );
 
 CREATE TABLE agency (
@@ -44,6 +37,9 @@ CREATE TABLE earthquake_event (
     used_phase_count SMALLINT NOT NULL,
     used_station_count SMALLINT NOT NULL,
     azimuthal_gap SMALLINT NOT NULL,
+    magnitude_value FLOAT NOT NULL,
+    magnitude_uncertainty FLOAT,
+    earthquake_type_id REFERENCES earthquake_type(earthquake_type_id),    
     location_id REFERENCES earthquake_location(earthquake_location_id),
     magnitude_id REFERENCES earthquake_magnitude(earthquake_magnitude_id),
     agency_id REFERENCES agency(agency_id)
