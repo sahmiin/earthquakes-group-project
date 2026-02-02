@@ -1,7 +1,5 @@
 -- This file should contain all code required to create & seed database tables.
 
-
-
 DROP DATABASE IF EXISTS earthquakes;
 CREATE DATABASE earthquakes;
 
@@ -12,44 +10,41 @@ CREATE TABLE country (
     country_name VARCHAR(255)
 );
 
-CREATE TABLE type (
-    type_id SMALLINT PRIMARY KEY,
-    type_name VARCHAR(255)
+CREATE TABLE earthquake_type (
+    earthquake_type_id SMALLINT PRIMARY KEY,
+    earthquake_type_name VARCHAR(255)
 );
 
-CREATE TABLE location (
-    location_id BIGINT PRIMARY KEY,
-    longitude FLOAT,
-    latitude FLOAT,
-    country_id REFERENCES type(country_id)
+CREATE TABLE earthquake_location (
+    earthquake_location_id BIGINT PRIMARY KEY,
+    longitude FLOAT NOT NULL,
+    latitude FLOAT NOT NULL,
+    country_id REFERENCES earthquake_type(country_id)
 );
 
-CREATE TABLE magnitude (
-    magnitude_id SMALLINT PRIMARY KEY,
-    value FLOAT,
+CREATE TABLE earthquake_magnitude (
+    earthquake_magnitude_id SMALLINT PRIMARY KEY,
+    magnitude_value FLOAT NOT NULL,
     uncertainty FLOAT,
-    type_id REFERENCES type(type_id)
+    earthquake_type_id REFERENCES earthquake_type(earthquake_type_id)
 );
 
 CREATE TABLE agency (
     agency_id BIGINT PRIMARY KEY,
-    agency_name VARCHAR(255)
+    agency_name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE event (
-    event_id BIGINT PRIMARY KEY,
-    start_time TIMESTAMP,
+CREATE TABLE earthquake_event (
+    earthquake_event_id BIGINT GENERATE AS IDENTITY PRIMARY KEY,
+    start_time TIMESTAMP NOT NULL,
     description TEXT,
-    creation_time TIMESTAMP,
-    depth FLOAT,
+    creation_time TIMESTAMP NOT NULL,
+    depth FLOAT NOT NULL,
     depth_uncertainty FLOAT,
-    used_phase_count SMALLINT,
-    used_station_count SMALLINT,
-    azimuthal_gap SMALLINT,
-    location_id BIGINT,
-    magnitude_id SMALLINT,
-    agency_id BIGINT,
-    FOREIGN KEY location_id,
-    FOREIGN KEY magnitude_id,
-    FOREIGN KEY agency_id
+    used_phase_count SMALLINT NOT NULL,
+    used_station_count SMALLINT NOT NULL,
+    azimuthal_gap SMALLINT NOT NULL,
+    location_id REFERENCES earthquake_location(earthquake_location_id),
+    magnitude_id REFERENCES earthquake_magnitude(earthquake_magnitude_id),
+    agency_id REFERENCES agency(agency_id)
 );
