@@ -28,5 +28,5 @@ jobs:
 
 
       - name: Run pylint
-        run: pylint $(git ls-files '*.py') --fail-under=7
+        run: pylint $(git ls-files '*.py') --fail-under=8
 
