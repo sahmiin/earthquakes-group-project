@@ -29,6 +29,7 @@ CREATE TABLE agency (
 
 CREATE TABLE earthquake_event (
     earthquake_event_id BIGINT GENERATE AS IDENTITY PRIMARY KEY,
+    usgs_event_id BIGINT UNIQUE NOT NULL,
     start_time TIMESTAMP NOT NULL,
     description TEXT NOT NULL,
     creation_time TIMESTAMP NOT NULL,
