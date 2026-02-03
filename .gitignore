@@ -111,4 +111,5 @@ terraform.*
 
 pipeline/*.csv
 dashboard/*.csv
+pipeline/*.json
 *.csv
