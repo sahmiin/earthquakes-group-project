@@ -1,7 +1,9 @@
-beautifulsoup4
-lxml
 bs4
 requests
 pylint
 pytest
+python-dotenv
+lxml
+psycopg2
+opencage
 pandas
