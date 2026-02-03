@@ -32,11 +32,11 @@ CREATE TABLE "country"(
 ALTER TABLE
     "country" ADD PRIMARY KEY("country_id");
 CREATE TABLE "magnitude_type"(
-    "magntiude_type_id" SMALLINT NOT NULL,
+    "magnitude_type_id" SMALLINT NOT NULL,
     "magnitude_type_name" VARCHAR(255) NOT NULL
 );
 ALTER TABLE
-    "magnitude_type" ADD PRIMARY KEY("magntiude_type_id");
+    "magnitude_type" ADD PRIMARY KEY("magnitude_type_id");
 CREATE TABLE "subscriber"(
     "subscriber_id" BIGINT NOT NULL,
     "subscriber_name" VARCHAR(255) NOT NULL,
