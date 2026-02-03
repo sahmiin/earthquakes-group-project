@@ -6,3 +6,4 @@ python-dotenv
 lxml
 psycopg2
 opencage
+pandas
