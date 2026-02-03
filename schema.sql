@@ -1,10 +1,3 @@
--- This file should contain all code required to create & seed database tables.
-
-DROP DATABASE IF EXISTS earthquakes;
-CREATE DATABASE earthquakes;
-
-\c earthquakes
-
 CREATE TABLE "event"(
     "event_id" BIGINT NOT NULL,
     "start_time" TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
@@ -32,11 +25,11 @@ CREATE TABLE "country"(
 ALTER TABLE
     "country" ADD PRIMARY KEY("country_id");
 CREATE TABLE "magnitude_type"(
-    "magnitude_type_id" SMALLINT NOT NULL,
+    "magntiude_type_id" SMALLINT NOT NULL,
     "magnitude_type_name" VARCHAR(255) NOT NULL
 );
 ALTER TABLE
-    "magnitude_type" ADD PRIMARY KEY("magnitude_type_id");
+    "magnitude_type" ADD PRIMARY KEY("magntiude_type_id");
 CREATE TABLE "subscriber"(
     "subscriber_id" BIGINT NOT NULL,
     "subscriber_name" VARCHAR(255) NOT NULL,
