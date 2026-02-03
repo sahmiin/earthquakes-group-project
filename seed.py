@@ -5,10 +5,11 @@ from os import environ as ENV
 from psycopg2 import connect, Error
 from pycountry import countries
 from dotenv import load_dotenv
-from psycopg2.extras import execute_batch
+from psycopg2.extras import execute_values, execute_batch
+from psycopg2.extensions import connection
 
-def get_db_connection():
-    load_dotenv()
+def get_db_connection() -> connection:
+    """Returns a database connection."""
     try:
         connection = connect(
             user=ENV.get("DB_USERNAME"),
@@ -23,7 +24,8 @@ def get_db_connection():
         return None
 
 
-def seed_countries():
+def seed_countries(conn: connection) -> None:
+    """Seed the countries master data."""
     rows = []
 
     for c in countries:
@@ -31,7 +33,6 @@ def seed_countries():
         code = c.alpha_2
         rows.append((name, code))
 
-    conn = get_db_connection()
     try:
         with conn:
             with conn.cursor() as cur:
@@ -45,5 +46,37 @@ def seed_countries():
     finally:
         conn.close()
 
+
+def seed_magnitude_types(conn: connection) -> None:
+    """Seed magnitude types."""
+    magnitude_types = [
+        ("ml",),
+        ("md",),
+        ("mw",),
+        ("mb",),
+        ("mh",),
+        ("mfa",),
+        ("mww",),
+        ("mwc",),
+        ("mwb",),
+        ("mwr",),
+        ("mint",),
+    ]
+
+    sql = """
+    INSERT INTO magnitude_type (magnitude_type_name)
+    VALUES %s
+    ON CONFLICT (magnitude_type_name) DO NOTHING;
+    """
+
+    with conn.cursor() as cur:
+        execute_values(cur, sql, magnitude_types)
+
+    conn.commit()
+
+
 if __name__ == "__main__":
-    seed_countries()
+    load_dotenv()
+    conn = get_db_connection()
+    seed_countries(conn)
+    seed_magnitude_types(conn)
