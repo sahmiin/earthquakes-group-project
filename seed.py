@@ -1,5 +1,6 @@
 """This script will seed the master data into the RDS."""
 
+import logging
 from os import environ as ENV
 
 from psycopg2 import connect, Error
@@ -7,6 +8,8 @@ from pycountry import countries
 from dotenv import load_dotenv
 from psycopg2.extras import execute_values, execute_batch
 from psycopg2.extensions import connection
+
+logging.basicConfig(level=logging.INFO)
 
 def get_db_connection() -> connection:
     """Returns a database connection."""
@@ -20,7 +23,7 @@ def get_db_connection() -> connection:
         )
         return connection
     except Error as e:
-        print(f"Error connecting to database: {e}.")
+        logging.warning(f"Error connecting to database: {e}.")
         return None
 
 
@@ -42,7 +45,7 @@ def seed_countries(conn: connection) -> None:
                             VALUES (%s, %s)
                             ON CONFLICT (country_code) DO NOTHING;
                             """, rows, page_size=100)
-        print(f"Seeded {len(rows)} countries.")
+        logging.info(f"Seeded {len(rows)} countries.")
     finally:
         conn.close()
 

@@ -6,11 +6,12 @@ import psycopg2
 from dotenv import load_dotenv
 from flask import Flask, jsonify
 from psycopg2.extras import RealDictCursor
+from psycopg2.extensions import connection
 from psycopg2 import Error
 
 app = Flask(__name__)
 
-def get_db_connection():
+def get_db_connection() -> connection:
     load_dotenv()
     try:
         connection = psycopg2.connect(
