@@ -213,6 +213,18 @@ variable "ecr_repositories" {
         force_delete = true
         retention_days = 30
         }
+      weekly-report = {
+        mutable_tags = true
+        scan_on_push = true
+        force_delete = true
+        retention_days = 30
+        }
+      alerts = {
+        mutable_tags = true
+        scan_on_push = true
+        force_delete = true
+        retention_days = 30
+        }
     }
 }
 
@@ -220,4 +232,40 @@ variable "ecs_cluster_name" {
     type = string
     description = "Name of existing ECS cluster"
   
+}
+
+variable "weekly_report_email_subscribers" {
+  type = list(string)
+  description = "Email addresses to subscribe to weekly"
+  default = []
+}
+
+variable "weekly_schedule_expression" {
+  type = string
+  description = "EventBridge schedule for weekly report."
+  default = "cron(0 9 ? * MON *)"  
+}
+
+variable "enable_weekly_report_lambda" {
+  type = bool
+  description = "Create the weekly report Lambda and its trigger"
+  default = false
+}
+
+variable "enable_alert_lambda" {
+  type = bool
+  description = "Create the alert Lambda"
+  default = false
+}
+
+variable "weekly_report_lambda_image_uri" {
+  type = string
+  description = "ECR image URI for the weekly Lambda"
+  default = ""
+}
+
+variable "alert_lambda_image_uri" {
+  type = string
+  description = "ECR image URI for the alert Lambda"
+  default = ""
 }

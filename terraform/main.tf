@@ -400,3 +400,95 @@ resource "aws_ecs_service" "service_2" {
 
   tags = local.common_tags
 }
+
+# SNS (email)
+
+resource "aws_sns_topic" "reports" {
+  name = "${local.name_prefix}-weekly-reports"
+  tags = local.common_tags
+}
+
+resource "aws_sns_topic_subscription" "reports_email" {
+  for_each = toset(var.weekly_report_email_subscribers)
+  topic_arn = aws_sns_topic.reports.arn
+  protocol = "email"
+  endpoint = each.value
+}
+
+# EventBridge (weekly)
+
+resource "aws_cloudwatch_event_rule" "weekly_report" {
+  name = "${local.name_prefix}-weekly-report"
+  description = "Weekly report lambda"
+  schedule_expression = var.weekly_schedule_expression
+  tags = local.common_tags
+}
+
+
+resource "aws_lambda_function" "weekly_report" {
+  count = var.enable_weekly_report_lambda ? 1 : 0
+  function_name = "${local.name_prefix}-weekly-report-lambda"
+  role = aws_iam_role.lambda_exec.arn
+
+  package_type = "Image"
+  image_uri = var.weekly_report_lambda_image_uri
+
+  timeout = var.lambda_timeout
+  memory_size = var.lambda_memory_mb
+
+  tags = local.common_tags
+  
+}
+
+resource "aws_cloudwatch_event_target" "weekly_report_target" {
+  count = var.enable_weekly_report_lambda ? 1 : 0
+  rule = aws_cloudwatch_event_rule.weekly_report.name
+  target_id = "weekly-report-lambda"
+  arn = aws_lambda_function.weekly_report[0].arn
+}
+
+resource "aws_lambda_permission" "allow_eventbridge_weekly" {
+  count = var.enable_weekly_report_lambda ? 1: 0
+  statement_id = "AllowWeeklyReportFromEventBridge"
+  action = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.weekly_report[0].function_name
+  principal = "events.amazonaws.com"
+  source_arn = aws_cloudwatch_event_rule.weekly_report.arn
+}
+
+# Alert Lambda
+
+resource "aws_lambda_function" "alert" {
+  count = var.enable_alert_lambda ? 1 : 0
+  function_name = "${local.name_prefix}-alert-lambda"
+  role = aws_iam_role.lambda_exec.arn
+
+  package_type = "Image"
+  image_uri = var.alert_lambda_image_uri
+
+  timeout = var.lambda_timeout
+  memory_size = var.lambda_memory_mb
+
+  tags = local.common_tags
+}
+
+#  Weekly report publishing
+
+resource "aws_iam_policy" "lambda_publish_reports" {
+  name = "${local.name_prefix}-lambda-publish-reports"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = ["sns:Publish"]
+      Resource = aws_sns_topic.reports.arn
+    }]
+  })
+}
+
+resource "aws_iam_policy_attachment" "lambda_publish_reports_attach" {
+  name = "placeholder"
+  roles = [aws_iam_role.lambda_exec.name]
+  policy_arn = aws_iam_policy.lambda_publish_reports.arn
+}
