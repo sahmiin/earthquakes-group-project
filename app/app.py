@@ -4,7 +4,7 @@ from os import environ as ENV
 
 import psycopg2
 from dotenv import load_dotenv
-from flask import Flask, current_app, jsonify, request
+from flask import Flask, jsonify
 from psycopg2.extras import RealDictCursor
 from psycopg2 import Error
 
