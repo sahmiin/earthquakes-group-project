@@ -1,5 +1,7 @@
-json
+beautifulsoup4
+lxml
 bs4
 requests
 pylint
 pytest
+pandas
