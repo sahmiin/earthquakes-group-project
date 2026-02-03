@@ -21,7 +21,8 @@ INSERT INTO country (country_name) VALUES
 ('Panama'),
 ('Columbia'),
 ('Peru'),
-('Ecuador')
+('Ecuador'),
+('Tajikistan')
 ;
 
 INSERT INTO agency (agency_id, agency_name) VALUES
