@@ -30,7 +30,7 @@ def build_dataframe(records: list[dict]) -> pd.DataFrame:
             "azimuthal_gap": r["azimuthal_gap"],
             "magnitude_value": r["magnitude_value"],
             "magnitude_uncertainty": r["magnitude_uncertainty"],
-            "magnitude_type_name": r["magnitude_type_name"],
+            "magnitude_type_name": r["magnitude_type_name"].lower(),
             "agency_name": r["agency_name"],
         })
 
