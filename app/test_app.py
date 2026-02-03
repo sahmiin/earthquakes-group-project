@@ -3,7 +3,7 @@
 from unittest.mock import patch, MagicMock
 
 import pytest
-from psycopg2 import Error as PsyError
+from psycopg2 import Error
 
 from app import app
 
