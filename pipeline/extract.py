@@ -25,6 +25,7 @@ def extract_data():
     data = []
     for e in events:
         event = {}
+        event["usgs_event_id"] = e.get("catalog:eventid")
         event["start_time"] = check_for_text(e, "time", "value")
         event["description"] = check_for_text(e, "description", "text")
         event["creation_time"] = check_for_text(e, "creationInfo", "creationTime")
@@ -46,7 +47,7 @@ def extract_data():
 
 def save_data(data):
     """Saves the extracted information to a json file as a list of dictionaries"""
-    with open("data/earthquakes.json", "w", encoding="utf-8") as f:
+    with open("earthquakes.json", "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
 
 if __name__ == "__main__":
