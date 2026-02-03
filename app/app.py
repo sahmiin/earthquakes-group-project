@@ -22,7 +22,7 @@ def get_db_connection():
         )
         return connection
     except Error as e:
-        print(f"Error connecting to database: {e}")
+        print(f"Error connecting to database: {e}.")
         return None
 
 
@@ -31,7 +31,7 @@ def index():
     """Returns the most recent earthquake."""
     connection = get_db_connection()
     if not connection:
-        return jsonify({"error": "Database connection failed"}), 500
+        return jsonify({"error": "Database connection failed."}), 500
 
     try:
         cursor = connection.cursor(cursor_factory=RealDictCursor)
@@ -43,6 +43,82 @@ def index():
         most_recent_earthquake = cursor.fetchall()
 
         return jsonify([dict(most_recent_earthquake)])
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+
+
+@app.route('/country')
+def get_animal():
+    connection = get_db_connection()
+    if not connection:
+        return jsonify({"error": "Database connection failed."}), 500
+    
+    try:
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
+        cursor.execute("""
+                       SELECT * FROM event e
+                        JOIN country c ON (e.country_id = c.country_id) 
+                        ORDER BY country_name;
+                        """)
+        earthquakes = cursor.fetchall()
+        return jsonify(dict(earthquakes))
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+
+
+@app.route('/country/<int:country_name>')
+def get_animal(country_name):
+    connection = get_db_connection()
+    if not connection:
+        return jsonify({"error": "Database connection failed."}), 500
+
+    try:
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
+        cursor.execute("""
+                       SELECT * FROM event e
+                        JOIN country c ON (e.country_id = c.country_id) 
+                        WHERE country_name = %s;
+                        """, 
+                        (country_name,))
+        earthquake = cursor.fetchone()
+        if earthquake:
+            return jsonify(dict(earthquake))
+        return jsonify({"error": "No recent earthquakes here."}), 404
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+
+
+@app.route('/magnitude/<str:order>')
+def get_animal(order):
+    connection = get_db_connection()
+    if not connection:
+        return jsonify({"error": "Database connection failed."}), 500
+    
+    if order != 'asc' or order != 'desc':
+        return jsonify({'error': "Invalid order direction."}), 500
+    
+    try:
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
+        cursor.execute("""
+                       SELECT * FROM event e
+                        JOIN country c ON (e.country_id = c.country_id) 
+                        ORDER BY magnitude_value %s;
+                        """,
+                        (order,))
+        earthquakes = cursor.fetchall()
+        return jsonify(dict(earthquakes))
     except Error as e:
         return jsonify({"error": str(e)}), 500
     finally:
