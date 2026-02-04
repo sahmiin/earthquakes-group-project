@@ -5,8 +5,14 @@ CREATE DATABASE earthquakes;
 
 \c earthquakes
 
+DROP TABLE IF EXISTS event CASCADE;
+DROP TABLE IF EXISTS country CASCADE ;
+DROP TABLE IF EXISTS magnitude_type CASCADE ;
+DROP TABLE IF EXISTS subscriber CASCADE ;
+
 CREATE TABLE "event"(
     "event_id" BIGINT NOT NULL,
+    "usgs_event_id" BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
     "start_time" TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
     "description" TEXT NOT NULL,
     "creation_time" TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
