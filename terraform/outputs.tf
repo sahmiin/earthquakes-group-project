@@ -20,7 +20,6 @@ output "ecs_cluster_name" {
 
 output "ecs_service_names" {
   value = [
-    aws_ecs_service.service_1.name,
     aws_ecs_service.service_2.name
   ]
   description = "ECS service names"

@@ -160,19 +160,6 @@ variable "log_retention_days" {
   default     = 14
 }
 
-variable "ecs_service_1" {
-  type = object({
-    name           = string
-    image          = string
-    desired_count  = number
-    cpu            = number
-    memory         = number
-    container_port = optional(number)
-  })
-
-  description = "Definition for ECS Fargate service 1"
-}
-
 variable "ecs_service_2" {
   type = object({
     name           = string
@@ -196,12 +183,6 @@ variable "ecr_repositories" {
     }))
     default = {
       api = {
-        mutable_tags = true
-        scan_on_push = true
-        force_delete = true
-        retention_days = 30
-        }
-    dashboard = {
         mutable_tags = true
         scan_on_push = true
         force_delete = true
