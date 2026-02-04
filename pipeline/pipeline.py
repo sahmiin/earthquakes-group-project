@@ -3,6 +3,7 @@ import logging
 from extract import extract_data
 from transform import transform
 from load import run_load_script
+from dotenv import load_dotenv
 
 
 logging.basicConfig(
@@ -29,5 +30,15 @@ def run_pipeline() -> None:
     logger.info("Pipeline finished successfully!")
 
 
+def handler(event, context):
+    load_dotenv()
+    run_pipeline()
+    return {
+        "statusCode": 200,
+        "body": "ETL pipeline completed successfully"
+    }
+
+
 if __name__ == "__main__":
+    load_dotenv()
     run_pipeline()
