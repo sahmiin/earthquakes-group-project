@@ -1,3 +1,6 @@
 pylint
 pytest
 pytest-cov
+psycopg2-binary
+xhtml2pdf
+boto3
