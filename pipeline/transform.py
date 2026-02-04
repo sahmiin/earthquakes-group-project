@@ -85,6 +85,8 @@ def transform(records: list[dict]) -> pd.DataFrame:
     df = convert_datatypes(df)
     logger.info("convert datatypes complete")
 
+    df = df[df["usgs_event_id"].notna()]
+
     before = len(df)
     df = drop_outliers(df)
     logger.info("drop outliers complete: dropped %d rows", before - len(df))
