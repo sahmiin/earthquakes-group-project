@@ -17,7 +17,7 @@ def get_db_connection() -> connection:
         connection = connect(
             user=ENV.get("DB_USERNAME"),
             password=ENV.get("DB_PASSWORD"),
-            host=ENV.get("DB_IP"),
+            host=ENV.get("DB_HOST"),
             port=ENV.get("DB_PORT"),
             database=ENV.get("DB_NAME")
         )
@@ -36,18 +36,14 @@ def seed_countries(conn: connection) -> None:
         code = c.alpha_2
         rows.append((name, code))
 
-    try:
-        with conn:
-            with conn.cursor() as cur:
-                execute_batch(cur, 
-                            """
-                            INSERT INTO country (country_name, country_code)
-                            VALUES (%s, %s)
-                            ON CONFLICT (country_code) DO NOTHING;
-                            """, rows, page_size=100)
-        logging.info(f"Seeded {len(rows)} countries.")
-    finally:
-        conn.close()
+    with conn:
+        with conn.cursor() as cur:
+            execute_batch(cur, 
+                        """
+                        INSERT INTO country (country_name, country_code)
+                        VALUES (%s, %s);
+                        """, rows, page_size=100)
+    logging.info(f"Seeded {len(rows)} countries.")
 
 
 def seed_magnitude_types(conn: connection) -> None:
@@ -68,14 +64,14 @@ def seed_magnitude_types(conn: connection) -> None:
 
     sql = """
     INSERT INTO magnitude_type (magnitude_type_name)
-    VALUES %s
-    ON CONFLICT (magnitude_type_name) DO NOTHING;
+    VALUES %s;
     """
 
     with conn.cursor() as cur:
         execute_values(cur, sql, magnitude_types)
 
     conn.commit()
+    logging.info(f"Seeded {len(magnitude_types)} rows.")
 
 
 if __name__ == "__main__":
@@ -83,3 +79,4 @@ if __name__ == "__main__":
     conn = get_db_connection()
     seed_countries(conn)
     seed_magnitude_types(conn)
+    conn.close()
