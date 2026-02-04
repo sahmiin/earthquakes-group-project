@@ -1,9 +1,8 @@
-""""""
+"""Extract script"""
 import logging
-
 from extract import extract_data
 from transform import transform
-from load import load_data
+from load import run_load_script
 
 
 logging.basicConfig(
@@ -22,7 +21,9 @@ def run_pipeline() -> None:
     df = transform(records)
     logger.info("transform complete: %d rows", len(df))
 
-    load_data(df)
+    new_events = df.to_dict("records")
+
+    run_load_script(new_events)
     logger.info("load complete")
 
     logger.info("pipeline finished successfully")
