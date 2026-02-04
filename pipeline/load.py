@@ -37,8 +37,13 @@ def get_location_id(conn, new_events):
     geocoder = OpenCageGeocode(key)
     for e in new_events:
         result = geocoder.reverse_geocode(e["latitude"], e["longitude"])
-        country_code = result[0]["components"]["country_code"].upper()
-        e["country_id"] = country_codes_lookup[country_code]
+        components = result[0].get(["components"], {})
+        country_code = components.get(["country_code"])
+        if not country_code:
+            e["country_id"] = country_codes_lookup["IW"]
+        else:
+            country_code_upper = country_code.upper()
+            e["country_id"] = country_codes_lookup[country_code_upper]
 
     return new_events
 
