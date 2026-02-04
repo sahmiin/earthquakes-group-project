@@ -17,7 +17,7 @@ def get_db_connection() -> connection:
         connection = psycopg2.connect(
             user=ENV.get("DB_USERNAME"),
             password=ENV.get("DB_PASSWORD"),
-            host=ENV.get("DB_IP"),
+            host=ENV.get("DB_HOST"),
             port=ENV.get("DB_PORT"),
             database=ENV.get("DB_NAME")
         )
@@ -43,7 +43,7 @@ def index():
                         """)
         most_recent_earthquake = cursor.fetchall()
 
-        return [dict(most_recent_earthquake)]
+        return [most_recent_earthquake]
     except Error as e:
         return {"error": str(e)}, 500
     finally:
@@ -103,7 +103,7 @@ def get_earthquakes_in_country(country_name):
             connection.close()
 
 
-@app.route('/magnitude/<str:order>')
+@app.route('/magnitude/<string:order>')
 def get_earthquakes_ordered_by_magnitude(order):
     """Returns all recent earthquakes in a given order of magnitude."""
     connection = get_db_connection()
