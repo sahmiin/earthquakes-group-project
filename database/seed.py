@@ -41,7 +41,8 @@ def seed_countries(conn: connection) -> None:
             execute_batch(cur, 
                         """
                         INSERT INTO country (country_name, country_code)
-                        VALUES (%s, %s);
+                        VALUES (%s, %s)
+                        ON CONFLICT (country_code) DO NOTHING;
                         """, rows, page_size=100)
     logging.info(f"Seeded {len(rows)} countries.")
 

@@ -32,14 +32,14 @@ ALTER TABLE
     "event" ADD PRIMARY KEY("event_id");
 CREATE TABLE "country"(
     "country_id" SMALLINT NOT NULL,
-    "country_name" VARCHAR(255) NOT NULL,
-    "country_code" VARCHAR(255) NOT NULL
+    "country_name" VARCHAR(255) UNIQUE NOT NULL,
+    "country_code" VARCHAR(255) UNIQUE NOT NULL
 );
 ALTER TABLE
     "country" ADD PRIMARY KEY("country_id");
 CREATE TABLE "magnitude_type"(
     "magntiude_type_id" SMALLINT NOT NULL,
-    "magnitude_type_name" VARCHAR(255) NOT NULL
+    "magnitude_type_name" VARCHAR(255) UNIQUE NOT NULL
 );
 ALTER TABLE
     "magnitude_type" ADD PRIMARY KEY("magntiude_type_id");
