@@ -27,27 +27,45 @@ def get_magnitude_type_id(conn, new_events):
     return new_events
 
 
-def get_location_id():
+def get_location_id(conn, new_events):
+    """Uses a geolocation API to return the country code for a given lat and lon"""
     with conn.cursor() as cur:
-        cur.execute("SELECT country_name, country_id FROM country;")
+        cur.execute("SELECT country_code, country_id FROM country;")
         country_codes_lookup = dict(cur.fetchall())
 
     key = ENV["API_KEY"]
     geocoder = OpenCageGeocode(key)
     for e in new_events:
         result = geocoder.reverse_geocode(e["latitude"], e["longitude"])
-        country = result[0]["components"]["country"]
-        e["country_id"] = country_codes_lookup[country]
+        country_code = result[0]["components"]["country_code"].upper()
+        e["country_id"] = country_codes_lookup[country_code]
+
+    return new_events
 
 
 
 def upload_data(conn, new_events):
+    """SQL query to add all events to DB"""
     upsert_query = """
-    INSERT INTO earthquake_event (usgs_event_id, start_time, description, 
+    INSERT INTO event (usgs_event_id, start_time, description, 
     creation_time, depth, depth_uncertainty, used_phase_count, used_station_count, 
     azimuthal_gap, magnitude_value, magnitude_uncertainty, magnitude_type_id,
     country_id, latitude, longitude)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    VALUES (%(usgs_event_id)s,
+        %(start_time)s,
+        %(description)s,
+        %(creation_time)s,
+        %(depth)s,
+        %(depth_uncertainty)s,
+        %(used_phase_count)s,
+        %(used_station_count)s,
+        %(azimuthal_gap)s,
+        %(magnitude_value)s,
+        %(magnitude_uncertainty)s,
+        %(magnitude_type_id)s,
+        %(country_id)s,
+        %(latitude)s,
+        %(longitude)s)
     ON CONFLICT (usgs_event_id) DO UPDATE SET
         start_time            = EXCLUDED.start_time,
         description           = EXCLUDED.description,
@@ -64,30 +82,36 @@ def upload_data(conn, new_events):
         latitude              = EXCLUDED.latitude,
         longitude             = EXCLUDED.longitude
     WHERE
-        earthquake_event.start_time              IS DISTINCT FROM EXCLUDED.start_time              OR
-        earthquake_event.description             IS DISTINCT FROM EXCLUDED.description             OR
-        earthquake_event.creation_time           IS DISTINCT FROM EXCLUDED.creation_time           OR
-        earthquake_event.depth                   IS DISTINCT FROM EXCLUDED.depth                   OR
-        earthquake_event.depth_uncertainty       IS DISTINCT FROM EXCLUDED.depth_uncertainty       OR
-        earthquake_event.used_phase_count        IS DISTINCT FROM EXCLUDED.used_phase_count        OR
-        earthquake_event.used_station_count      IS DISTINCT FROM EXCLUDED.used_station_count      OR
-        earthquake_event.azimuthal_gap           IS DISTINCT FROM EXCLUDED.azimuthal_gap           OR
-        earthquake_event.magnitude_value         IS DISTINCT FROM EXCLUDED.magnitude_value         OR
-        earthquake_event.magnitude_uncertainty   IS DISTINCT FROM EXCLUDED.magnitude_uncertainty   OR
-        earthquake_event.magnitude_type_id       IS DISTINCT FROM EXCLUDED.magnitude_type_id       OR
-        earthquake_event.country_id              IS DISTINCT FROM EXCLUDED.country_id              OR
-        earthquake_event.latitude                IS DISTINCT FROM EXCLUDED.latitude                OR
-        earthquake_event.longitude               IS DISTINCT FROM EXCLUDED.longitude;
+        event.start_time              IS DISTINCT FROM EXCLUDED.start_time              OR
+        event.description             IS DISTINCT FROM EXCLUDED.description             OR
+        event.creation_time           IS DISTINCT FROM EXCLUDED.creation_time           OR
+        event.depth                   IS DISTINCT FROM EXCLUDED.depth                   OR
+        event.depth_uncertainty       IS DISTINCT FROM EXCLUDED.depth_uncertainty       OR
+        event.used_phase_count        IS DISTINCT FROM EXCLUDED.used_phase_count        OR
+        event.used_station_count      IS DISTINCT FROM EXCLUDED.used_station_count      OR
+        event.azimuthal_gap           IS DISTINCT FROM EXCLUDED.azimuthal_gap           OR
+        event.magnitude_value         IS DISTINCT FROM EXCLUDED.magnitude_value         OR
+        event.magnitude_uncertainty   IS DISTINCT FROM EXCLUDED.magnitude_uncertainty   OR
+        event.magnitude_type_id       IS DISTINCT FROM EXCLUDED.magnitude_type_id       OR
+        event.country_id              IS DISTINCT FROM EXCLUDED.country_id              OR
+        event.latitude                IS DISTINCT FROM EXCLUDED.latitude                OR
+        event.longitude               IS DISTINCT FROM EXCLUDED.longitude;
     """
 
     with conn.cursor() as cur:
         cur.executemany(upsert_query, new_events)
     conn.commit()
 
-
-if __name__ == "__main__":
+def run_load_script(new_events: list[dict]):
+    """Script to run necessary functions to load new events to the DB"""
     load_dotenv()
     conn = get_connection(ENV)
-    events = get_magnitude_type_id(conn)
-    events = get_location_id(conn, events)
-    upload_data()
+    try:
+        events_mag_id = get_magnitude_type_id(conn, new_events)
+        events_location_id = get_location_id(conn, events_mag_id)
+        upload_data(conn, events_location_id)
+    finally:
+        conn.close()
+
+if __name__ == "__main__":
+    run_load_script()
