@@ -16,17 +16,17 @@ logger = logging.getLogger(__name__)
 def run_pipeline() -> None:
     "Runs Extract, Transform, Load scripts"
     records = extract_data()
-    logger.info("extract complete: %d records", len(records))
+    logger.info("Extract complete: %d records", len(records))
 
     df = transform(records)
-    logger.info("transform complete: %d rows", len(df))
+    logger.info("Transform complete: %d rows", len(df))
 
     new_events = df.to_dict("records")
 
     run_load_script(new_events)
-    logger.info("load complete")
+    logger.info("Load complete!")
 
-    logger.info("pipeline finished successfully")
+    logger.info("Pipeline finished successfully!")
 
 
 if __name__ == "__main__":
