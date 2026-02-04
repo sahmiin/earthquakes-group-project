@@ -7,6 +7,7 @@ CREATE DATABASE earthquakes;
 
 CREATE TABLE "event"(
     "event_id" BIGINT NOT NULL,
+    "usgs_event_id" VARCHAR(50),
     "start_time" TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
     "description" TEXT NOT NULL,
     "creation_time" TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
