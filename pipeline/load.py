@@ -19,11 +19,12 @@ def get_connection(config: _Environ):
 def get_magnitude_type_id(conn, new_events):
     """Map magnitude type name to the id stored in the database"""
     with conn.cursor() as cur:
-        cur.execute("SELECT magnitude_type_name, magnitude_type_id FROM magnitude_type;")
+        cur.execute(
+            "SELECT magnitude_type_name, magnitude_type_id FROM magnitude_type;")
         mag_type_table = dict(cur.fetchall())
         for e in new_events:
             e["magnitude_type_id"] = mag_type_table[e["magnitude_type_name"]]
-    
+
     return new_events
 
 
@@ -37,8 +38,8 @@ def get_location_id(conn, new_events):
     geocoder = OpenCageGeocode(key)
     for e in new_events:
         result = geocoder.reverse_geocode(e["latitude"], e["longitude"])
-        components = result[0].get(["components"], {})
-        country_code = components.get(["country_code"])
+        components = result[0].get("components", {})
+        country_code = components.get("country_code")
         if not country_code:
             e["country_id"] = country_codes_lookup["IW"]
         else:
@@ -46,7 +47,6 @@ def get_location_id(conn, new_events):
             e["country_id"] = country_codes_lookup[country_code_upper]
 
     return new_events
-
 
 
 def upload_data(conn, new_events):
@@ -60,7 +60,7 @@ def upload_data(conn, new_events):
         %(start_time)s,
         %(description)s,
         %(creation_time)s,
-        %(depth)s,
+        %(depth_value)s,
         %(depth_uncertainty)s,
         %(used_phase_count)s,
         %(used_station_count)s,
@@ -107,6 +107,7 @@ def upload_data(conn, new_events):
         cur.executemany(upsert_query, new_events)
     conn.commit()
 
+
 def run_load_script(new_events: list[dict]):
     """Script to run necessary functions to load new events to the DB"""
     load_dotenv()
@@ -117,6 +118,7 @@ def run_load_script(new_events: list[dict]):
         upload_data(conn, events_location_id)
     finally:
         conn.close()
+
 
 if __name__ == "__main__":
     run_load_script()
