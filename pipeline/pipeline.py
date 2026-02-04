@@ -1,4 +1,4 @@
-"""Extract script"""
+"""Pipeline Script"""
 import logging
 from extract import extract_data
 from transform import transform
