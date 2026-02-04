@@ -19,11 +19,12 @@ def get_connection(config: _Environ):
 def get_magnitude_type_id(conn, new_events):
     """Map magnitude type name to the id stored in the database"""
     with conn.cursor() as cur:
-        cur.execute("SELECT magnitude_type_name, magnitude_type_id FROM magnitude_type;")
+        cur.execute(
+            "SELECT magnitude_type_name, magnitude_type_id FROM magnitude_type;")
         mag_type_table = dict(cur.fetchall())
         for e in new_events:
             e["magnitude_type_id"] = mag_type_table[e["magnitude_type_name"]]
-    
+
     return new_events
 
 
@@ -38,7 +39,6 @@ def get_location_id():
         result = geocoder.reverse_geocode(e["latitude"], e["longitude"])
         country = result[0]["components"]["country"]
         e["country_id"] = country_codes_lookup[country]
-
 
 
 def upload_data(conn, new_events):
