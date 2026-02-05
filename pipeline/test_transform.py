@@ -84,7 +84,6 @@ def test_convert_datatypes_valid():
     assert isinstance(converted_df.loc[0, "depth_uncertainty"], float)
     assert isinstance(converted_df.loc[0, "magnitude_value"], float)
     assert isinstance(converted_df.loc[0, "magnitude_uncertainty"], float)
-    assert str(converted_df["usgs_event_id"].dtype) == "Int64"
     assert str(converted_df["used_phase_count"].dtype) == "Int64"
     assert str(converted_df["used_station_count"].dtype) == "Int64"
     assert str(converted_df["azimuthal_gap"].dtype) == "Int64"

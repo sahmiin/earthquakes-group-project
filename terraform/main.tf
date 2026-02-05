@@ -241,54 +241,12 @@ resource "aws_iam_role" "ecs_task_role" {
 }
 
 # CloudWatch Logs groups for each service
-resource "aws_cloudwatch_log_group" "svc1" {
-  name              = "/ecs/${local.name_prefix}/${var.ecs_service_1.name}"
-  retention_in_days = var.log_retention_days
-  tags              = local.common_tags
-}
-
 resource "aws_cloudwatch_log_group" "svc2" {
   name              = "/ecs/${local.name_prefix}/${var.ecs_service_2.name}"
   retention_in_days = var.log_retention_days
   tags              = local.common_tags
 }
 
-# Task definition: Service 1 - Dashboard
-resource "aws_ecs_task_definition" "service_1" {
-  family                   = "${local.name_prefix}-${var.ecs_service_1.name}"
-  requires_compatibilities = ["FARGATE"]
-  network_mode             = "awsvpc"
-  cpu                      = tostring(var.ecs_service_1.cpu)
-  memory                   = tostring(var.ecs_service_1.memory)
-  execution_role_arn       = aws_iam_role.ecs_task_execution.arn
-  task_role_arn            = aws_iam_role.ecs_task_role.arn
-
-  container_definitions = jsonencode([
-    {
-      name      = var.ecs_service_1.name
-      image     = var.ecs_service_1.image
-      essential = true
-      portMappings = var.ecs_service_1.container_port == null ? [] : [
-        { containerPort = var.ecs_service_1.container_port, hostPort = var.ecs_service_1.container_port, protocol = "tcp" }
-      ]
-      environment = [
-        { name = "RDS_HOST", value = aws_db_instance.postgres.address },
-        { name = "RDS_PORT", value = tostring(var.rds_port) },
-        { name = "RDS_DB",   value = var.rds_db_name }
-      ]
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          awslogs-group         = aws_cloudwatch_log_group.svc1.name
-          awslogs-region        = var.aws_region
-          awslogs-stream-prefix = "ecs"
-        }
-      }
-    }
-  ])
-
-  tags = local.common_tags
-}
 
 # Task definition: Service 2 - API
 resource "aws_ecs_task_definition" "service_2" {
@@ -366,25 +324,7 @@ resource "aws_ecr_lifecycle_policy" "repositories" {
 
 }
 
-
-# ECS Service: 1 - Dashboard
-resource "aws_ecs_service" "service_1" {
-  name            = "${local.name_prefix}-${var.ecs_service_1.name}"
-  cluster         = data.aws_ecs_cluster.main.arn
-  task_definition = aws_ecs_task_definition.service_1.arn
-  desired_count   = var.ecs_service_1.desired_count
-  launch_type     = "FARGATE"
-
-  network_configuration {
-    subnets         = var.ecs_subnet_ids != null ? var.ecs_subnet_ids : var.subnet_ids
-    security_groups = [aws_security_group.ecs_tasks.id]
-    assign_public_ip = var.ecs_assign_public_ip
-  }
-
-  tags = local.common_tags
-}
-
-# ECS Service: 2 - API
+# ECS Service: API
 resource "aws_ecs_service" "service_2" {
   name            = "${local.name_prefix}-${var.ecs_service_2.name}"
   cluster         = data.aws_ecs_cluster.main.arn
@@ -399,4 +339,96 @@ resource "aws_ecs_service" "service_2" {
   }
 
   tags = local.common_tags
+}
+
+# SNS (email)
+
+resource "aws_sns_topic" "reports" {
+  name = "${local.name_prefix}-weekly-reports"
+  tags = local.common_tags
+}
+
+resource "aws_sns_topic_subscription" "reports_email" {
+  for_each = toset(var.weekly_report_email_subscribers)
+  topic_arn = aws_sns_topic.reports.arn
+  protocol = "email"
+  endpoint = each.value
+}
+
+# EventBridge (weekly)
+
+resource "aws_cloudwatch_event_rule" "weekly_report" {
+  name = "${local.name_prefix}-weekly-report"
+  description = "Weekly report lambda"
+  schedule_expression = var.weekly_schedule_expression
+  tags = local.common_tags
+}
+
+
+resource "aws_lambda_function" "weekly_report" {
+  count = var.enable_weekly_report_lambda ? 1 : 0
+  function_name = "${local.name_prefix}-weekly-report-lambda"
+  role = aws_iam_role.lambda_exec.arn
+
+  package_type = "Image"
+  image_uri = var.weekly_report_lambda_image_uri
+
+  timeout = var.lambda_timeout
+  memory_size = var.lambda_memory_mb
+
+  tags = local.common_tags
+  
+}
+
+resource "aws_cloudwatch_event_target" "weekly_report_target" {
+  count = var.enable_weekly_report_lambda ? 1 : 0
+  rule = aws_cloudwatch_event_rule.weekly_report.name
+  target_id = "weekly-report-lambda"
+  arn = aws_lambda_function.weekly_report[0].arn
+}
+
+resource "aws_lambda_permission" "allow_eventbridge_weekly" {
+  count = var.enable_weekly_report_lambda ? 1: 0
+  statement_id = "AllowWeeklyReportFromEventBridge"
+  action = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.weekly_report[0].function_name
+  principal = "events.amazonaws.com"
+  source_arn = aws_cloudwatch_event_rule.weekly_report.arn
+}
+
+# Alert Lambda
+
+resource "aws_lambda_function" "alert" {
+  count = var.enable_alert_lambda ? 1 : 0
+  function_name = "${local.name_prefix}-alert-lambda"
+  role = aws_iam_role.lambda_exec.arn
+
+  package_type = "Image"
+  image_uri = var.alert_lambda_image_uri
+
+  timeout = var.lambda_timeout
+  memory_size = var.lambda_memory_mb
+
+  tags = local.common_tags
+}
+
+#  Weekly report publishing
+
+resource "aws_iam_policy" "lambda_publish_reports" {
+  name = "${local.name_prefix}-lambda-publish-reports"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = ["sns:Publish"]
+      Resource = aws_sns_topic.reports.arn
+    }]
+  })
+}
+
+resource "aws_iam_policy_attachment" "lambda_publish_reports_attach" {
+  name = "placeholder"
+  roles = [aws_iam_role.lambda_exec.name]
+  policy_arn = aws_iam_policy.lambda_publish_reports.arn
 }
