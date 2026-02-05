@@ -54,9 +54,6 @@ def convert_datatypes(df: pd.DataFrame) -> pd.DataFrame:
         df["magnitude_value"], errors="coerce")
     df["magnitude_uncertainty"] = pd.to_numeric(
         df["magnitude_uncertainty"], errors="coerce")
-
-    df["usgs_event_id"] = pd.to_numeric(
-        df["usgs_event_id"], errors="coerce").astype("Int64")
     df["used_phase_count"] = pd.to_numeric(
         df["used_phase_count"], errors="coerce").astype("Int64")
     df["used_station_count"] = pd.to_numeric(
