@@ -1,0 +1,4 @@
+pytest
+pylint
+boto3
+psycopg2-binary
