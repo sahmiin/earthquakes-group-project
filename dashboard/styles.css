@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+html, body, [class*="css"]  {
+  font-family: "Roboto", sans-serif;
+}
+
+
+.block-container {
+  padding-top: 1.2rem;
+  padding-bottom: 2rem;
+}
+
+/*title*/
+
+.dashboard-title {
+  text-align: center;
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 1rem 0 0.5rem 0;
+  letter-spacing: 0.0em;
+}
+
+.dashboard-subtitle {
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 400;
+  opacity: 0.75;
+  margin-bottom: 1.25rem;
+}
+
+/*buttons*/
+
+.stButton > button {
+  border-radius: 12px;
+  padding: 0.55rem 0.9rem;
+  font-weight: 600;
+}
+
+
