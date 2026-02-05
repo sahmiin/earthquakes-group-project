@@ -6,6 +6,6 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
-COPY alerts.py .
+COPY . .
 
 CMD ["alerts.lambda_handler"]
