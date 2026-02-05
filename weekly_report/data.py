@@ -30,9 +30,11 @@ def fetch_earthquake_data(conn: connection) -> pd.DataFrame:
     """Returns the week's worth of earthquake data as a dataframe."""
     query = """
             SELECT *
-            FROM event
+            FROM event e 
+            JOIN country c
+            ON (e.country_id = c.country_id)
             WHERE start_time >= now() - interval '7 days'
-            ORDER BY occurred_at DESC
+            ORDER BY start_time DESC
             """
     with conn:
         df = pd.read_sql_query(query, conn)
@@ -55,7 +57,7 @@ def get_statistics(df: pd.DataFrame):
         "average_magnitude": round(df["magnitude_value"].mean(), 2),
         "deepest": df["depth"].max(),
         "shallowest": df["depth"].min(),
-        "countries_affected": df["country"].nunique()
+        "countries_affected": df["country_name"].nunique()
     }
 
     return stats
@@ -63,7 +65,7 @@ def get_statistics(df: pd.DataFrame):
 
 def get_top_countries(df: pd.DataFrame) -> pd.DataFrame:
     """Returns a dataframe of the top affected countries."""
-    return (df.groupby("country")
+    return (df.groupby("country_name")
             .size()
             .reset_index(name="quake_count")
             .sort_values("quake_count", ascending=False))

@@ -1,6 +1,9 @@
 pylint
 pytest
+pandas
 pytest-cov
+python-dotenv
 psycopg2-binary
+reportlab
 xhtml2pdf
 boto3
