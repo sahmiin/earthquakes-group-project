@@ -2,6 +2,7 @@
 import logging
 import pandas as pd
 from extract import extract_data
+import json
 
 logging.basicConfig(
     level=logging.INFO,
@@ -30,7 +31,7 @@ def build_dataframe(records: list[dict]) -> pd.DataFrame:
             "azimuthal_gap": r["azimuthal_gap"],
             "magnitude_value": r["magnitude_value"],
             "magnitude_uncertainty": r["magnitude_uncertainty"],
-            "magnitude_type_name": r["magnitude_type_name"].lower(),
+            "magnitude_type_name": r["magnitude_type_name"],
             "agency_name": r["agency_name"],
         })
 
@@ -59,7 +60,7 @@ def convert_datatypes(df: pd.DataFrame) -> pd.DataFrame:
     df["used_station_count"] = pd.to_numeric(
         df["used_station_count"], errors="coerce").astype("Int64")
     df["azimuthal_gap"] = pd.to_numeric(
-        df["azimuthal_gap"], errors="coerce").astype("Int64")
+        df["azimuthal_gap"], errors="coerce").round().astype("Int64")
 
     return df
 
@@ -83,8 +84,11 @@ def transform(records: list[dict]) -> pd.DataFrame:
     logger.info("convert datatypes complete")
 
     df = df[df["usgs_event_id"].notna()]
+    df = df[df["magnitude_type_name"].notna()]
+    df["magnitude_type_name"] = df["magnitude_type_name"].str.lower()
 
     before = len(df)
+    df = df.dropna()
     df = drop_outliers(df)
     logger.info("drop outliers complete: dropped %d rows", before - len(df))
 
@@ -92,7 +96,18 @@ def transform(records: list[dict]) -> pd.DataFrame:
 
     return df
 
+def save_data(data):
+    """Saves the extracted information to a json file as a list of dictionaries"""
+    with open("earthquakes_transformed.json", "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+
 
 if __name__ == "__main__":
     records = extract_data()
-    print(transform(records))
+    data = transform(records)
+    data.to_json(
+    "earthquakes_transformed.json",
+    orient="records",
+    date_format="iso",
+    indent=2
+    )

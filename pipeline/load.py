@@ -2,6 +2,8 @@ from os import environ as ENV, _Environ
 from dotenv import load_dotenv
 import psycopg2
 from opencage.geocoder import OpenCageGeocode
+import json
+from datetime import datetime
 
 
 def get_connection(config: _Environ):
@@ -38,8 +40,9 @@ def get_location_id(conn, new_events):
     geocoder = OpenCageGeocode(key)
     for e in new_events:
         result = geocoder.reverse_geocode(e["latitude"], e["longitude"])
-        components = result[0].get("components", {})
-        country_code = components.get("country_code")
+        if result:
+            components = result[0].get("components", {})
+            country_code = components.get("country_code")
         if not country_code:
             e["country_id"] = country_codes_lookup["IW"]
         else:
@@ -121,4 +124,7 @@ def run_load_script(new_events: list[dict]):
 
 
 if __name__ == "__main__":
-    run_load_script()
+    with open("earthquakes_transformed.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+    filtered = [item for item in data if datetime.fromisoformat(item["start_time"].replace("Z", "+00:00")).month == 2]
+    run_load_script(filtered)

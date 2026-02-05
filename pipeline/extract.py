@@ -5,7 +5,8 @@ import bs4 as bs
 import requests
 
 
-URL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.quakeml"
+#URL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.quakeml"
+URL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.quakeml"
 
 
 def check_for_text(event, *tags, default=None):
