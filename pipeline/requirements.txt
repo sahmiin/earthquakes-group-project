@@ -4,6 +4,6 @@ pylint
 pytest
 python-dotenv
 lxml
-psycopg2
+psycopg2-binary
 opencage
 pandas
