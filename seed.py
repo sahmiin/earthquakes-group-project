@@ -11,6 +11,7 @@ from psycopg2.extensions import connection
 
 logging.basicConfig(level=logging.INFO)
 
+
 def get_db_connection() -> connection:
     """Returns a database connection."""
     try:
@@ -39,8 +40,8 @@ def seed_countries(conn: connection) -> None:
     try:
         with conn:
             with conn.cursor() as cur:
-                execute_batch(cur, 
-                            """
+                execute_batch(cur,
+                              """
                             INSERT INTO country (country_name, country_code)
                             VALUES (%s, %s)
                             ON CONFLICT (country_code) DO NOTHING;
