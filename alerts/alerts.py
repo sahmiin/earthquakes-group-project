@@ -52,7 +52,7 @@ def get_pg_connection() -> Connection:
     )
 
 
-def fetch_subscribers(conn: Connection, *, schema: str, table: str) -> list[Subscriber]:
+def fetch_subscribers(conn: Connection) -> list[Subscriber]:
     """Returns a list of subscribers"""
     query = f"""
         SELECT
@@ -62,7 +62,7 @@ def fetch_subscribers(conn: Connection, *, schema: str, table: str) -> list[Subs
             weekly,
             country_id,
             magnitude_value
-        FROM {schema}.{table}
+        FROM earthquakes.subscriber
         WHERE subscriber_email IS NOT NULL;
     """
     with conn.cursor() as cur:
@@ -98,18 +98,13 @@ def fetch_subscribers(conn: Connection, *, schema: str, table: str) -> list[Subs
 
 def fetch_country_name(
     conn: Connection,
-    *,
-    country_id: int,
-    schema: str,
-    table: str,
-    id_col: str = "country_id",
-    name_col: str = "country_name",
+    country_id: int
 ) -> str:
     """Fetches country name based on matching id in alert"""
     query = f"""
-        SELECT {name_col}
-        FROM {schema}.{table}
-        WHERE {id_col} = %s
+        SELECT country_name
+        FROM earthquakes.country
+        WHERE country_id = %s
         LIMIT 1;
     """
     with conn.cursor() as cur:
@@ -221,11 +216,6 @@ def format_body(event: EarthquakeEvent) -> str:
 def handle_earthquake_alert(
     event: EarthquakeEvent,
     *,
-    schema: str = "earthquakes",
-    subscriber_table: str = "subscribers",
-    country_table: str = "country",
-    country_id_col: str = "country_id",
-    country_name_col: str = "country_name",
     topic_arn: str = None,
     sns_client=get_boto3_client(ENV["AWS_REGION"]),
     subscribe_every_time: bool = True,
@@ -245,15 +235,11 @@ def handle_earthquake_alert(
     with get_pg_connection() as conn:
         country_name = fetch_country_name(
             conn,
-            country_id=event.country_id,
-            schema=schema,
-            table=country_table,
-            id_col=country_id_col,
-            name_col=country_name_col,
+            country_id=event.country_id
         )
         event = replace(event, country_name=country_name)
 
-        subs = fetch_subscribers(conn, schema=schema, table=subscriber_table)
+        subs = fetch_subscribers(conn)
 
     matched_count = sum(1 for s in subs if matches(s, event))
 
