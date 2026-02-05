@@ -47,6 +47,19 @@ def seed_countries(conn: connection) -> None:
     logging.info(f"Seeded {len(rows)} countries.")
 
 
+def seed_international_waters(conn):
+    """Seed international waters row in country table."""
+    with conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO country (country_name, country_code)
+                VALUES (%s, %s);
+                """,
+                ("International Waters", "IW"),
+            )
+    logging.info("Successfully seeded (IW)")
+
 def seed_magnitude_types(conn: connection) -> None:
     """Seed magnitude types."""
     magnitude_types = [
@@ -79,5 +92,6 @@ if __name__ == "__main__":
     load_dotenv()
     conn = get_db_connection()
     seed_countries(conn)
+    seed_international_waters(conn)
     seed_magnitude_types(conn)
     conn.close()
