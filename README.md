@@ -22,6 +22,33 @@ This project utilises the United States Geological Survey (USGS) earthquake data
 │   ├── load.py
 │   └── pipeline.py
 │
+├── database/
+│   ├── run_db.sh
+│   ├── schema.sql
+│   ├── seed.py
+│
+├── dashboard/
+│   ├── app.py
+│   ├── components/
+│       ├── filters.py
+│
+├── app/
+│   ├── app.py
+│
+├── alerts/
+│   ├── poll_services.py
+│   ├── preferences.py
+│   ├── formatting.py
+│   ├── sns_client.py
+│   ├── handler.py
+│
+├── weekly_report/
+│   ├── index.html
+│   ├── data.py
+│   ├── generate_pdf.py
+│   ├── ses_helper.py
+│   ├── report.py
+│
 └── terraform/
     └── main.tf
 ```
@@ -36,14 +63,22 @@ You must have an `.env` file with the following variables
 AWS_ACCESS_KEY=XXXX
 AWS_SECRET_KEY=XXXX
 
+DB_USERNAME=XXXX
+DB_PASSWORD=XXXX
+DB_HOST=XXXX
+DB_NAME=XXXX
+DB_PORT=XXXX
+API_KEY=XXXX
+
 ```
 
 ## Architecture Diagram & ERD 🧩
 
 ![ERD Diagram](quake_erd_ver1.png)
 
+![Architecture Diagram](architecture_final.drawio.png)
 
 ## Data Source 📊
 The data source used in this project is the [USGS Earthquakes feed](https://tools.sigmalabs.co.uk/api/plants/8).
 
-Ⓒ Quakes Group (Basil, Emma, Fariha, Jordan) 🌋
+Ⓒ The Tremolytics Team (Basil, Emma, Fariha, Jordan) 🌋
