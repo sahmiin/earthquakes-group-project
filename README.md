@@ -2,7 +2,7 @@
 
 A fully-functioning, end-to-end ETL pipeline and dashboard which cleans, transforms, and analyses real-time event data of earthquakes around the world. 
 
-## Introduction 🌷
+## Introduction 🌏
 
 The world is not as stable as we all might wish. There are regular earthquakes globally — most small, but some causing significant damage and danger to life. Knowing about earthquakes, both in advance and historically, can save lives.
 
@@ -62,6 +62,7 @@ You must have an `.env` file with the following variables
 ```
 AWS_ACCESS_KEY=XXXX
 AWS_SECRET_KEY=XXXX
+AWS_REGION=XXXX
 
 DB_USERNAME=XXXX
 DB_PASSWORD=XXXX
@@ -69,7 +70,6 @@ DB_HOST=XXXX
 DB_NAME=XXXX
 DB_PORT=XXXX
 API_KEY=XXXX
-
 ```
 
 ## Architecture Diagram & ERD 🧩
