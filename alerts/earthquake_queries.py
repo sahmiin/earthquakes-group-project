@@ -15,6 +15,7 @@ def fetch_recent_earthquakes(conn: Connection) -> list[EarthquakeEvent]:
             country_id,
             magnitude_value,
             creation_time,
+            description,
             longitude,
             latitude
         FROM public.event
@@ -27,11 +28,16 @@ def fetch_recent_earthquakes(conn: Connection) -> list[EarthquakeEvent]:
         rows = cur.fetchall()
 
     events: list[EarthquakeEvent] = []
-    for event_id, country_id, magnitude_value, creation_time, longitude, latitude in rows:
+    for event_id, country_id, magnitude_value, creation_time, description, longitude, latitude in rows:
 
-        place: str = None
+        place_parts = []
+        if description:
+            place_parts.append(str(description))
         if latitude is not None and longitude is not None:
-            place = f"{float(latitude):.5f}, {float(longitude):.5f}"
+            place_parts.append(
+                f"{float(latitude):.5f}, {float(longitude):.5f}")
+
+        place = " ".join(place_parts) if place_parts else None
 
         events.append(
             EarthquakeEvent(
