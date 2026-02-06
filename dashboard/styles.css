@@ -10,8 +10,6 @@ html, body, [class*="css"]  {
   padding-bottom: 2rem;
 }
 
-/*title*/
-
 .dashboard-title {
   text-align: center;
   font-size: 3rem;
@@ -28,12 +26,12 @@ html, body, [class*="css"]  {
   margin-bottom: 1.25rem;
 }
 
-/*buttons*/
 
 .stButton > button {
   border-radius: 12px;
   padding: 0.55rem 0.9rem;
   font-weight: 600;
 }
+
 
 

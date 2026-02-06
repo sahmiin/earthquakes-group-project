@@ -7,10 +7,7 @@ UTC = timezone.utc
 
 
 def timeframe_selector():
-    """
-    Renders a timeframe selector (Last 24h / 7d / 30d / Custom)
-    and returns (start_dt_utc, end_dt_utc, mode_str).
-    """
+    """ Renders a timeframe selector (Last 24h / 7d / 30d / Custom) and returns (start_dt_utc, end_dt_utc, mode_str)."""
 
     if "tf_mode" not in st.session_state:
         st.session_state.tf_mode = "Last 7 days"
@@ -67,7 +64,5 @@ def timeframe_selector():
         e = max(custom_start, custom_end)
         start_dt = datetime(s.year, s.month, s.day, 0, 0, 0, tzinfo=UTC)
         end_dt = datetime(e.year, e.month, e.day, 23, 59, 59, tzinfo=UTC)
-
-    st.markdown("</div>", unsafe_allow_html=True)
 
     return start_dt, end_dt, mode

@@ -1,3 +1,7 @@
 streamlit
 pylint
 pytest
+sqlalchemy
+load-dotenv
+pydeck
+altair
