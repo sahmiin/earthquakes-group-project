@@ -188,7 +188,7 @@ variable "ecr_repositories" {
         force_delete = true
         retention_days = 30
         }
-    lambda = {
+    pipeline = {
         mutable_tags = true
         scan_on_push = true
         force_delete = true
