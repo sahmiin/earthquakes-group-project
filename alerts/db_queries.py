@@ -3,12 +3,12 @@ from __future__ import annotations
 
 from os import environ as ENV
 
-from psycopg2 import connect, Connection
+from psycopg2 import connect
 
-from .classes import Subscriber
+from classes import Subscriber
 
 
-def get_pg_connection() -> Connection:
+def get_pg_connection() -> connect.Connection:
     """Returns a connection to RDS."""
     return connect(
         host=ENV["HOST_NAME"],
@@ -20,7 +20,7 @@ def get_pg_connection() -> Connection:
     )
 
 
-def fetch_subscribers(conn: Connection) -> list[Subscriber]:
+def fetch_subscribers(conn: connect.Connection) -> list[Subscriber]:
     """
     Returns a list of subscribers.
     """
@@ -32,7 +32,7 @@ def fetch_subscribers(conn: Connection) -> list[Subscriber]:
             weekly,
             country_id,
             magnitude_value
-        FROM earthquakes.subscriber
+        FROM public.subscriber
         WHERE subscriber_email IS NOT NULL;
     """
     with conn.cursor() as cur:
@@ -66,11 +66,11 @@ def fetch_subscribers(conn: Connection) -> list[Subscriber]:
     return subs
 
 
-def fetch_country_name(conn: Connection, country_id: int) -> str:
+def fetch_country_name(conn: connect.Connection, country_id: int) -> str:
     """Fetches country name by ID from earthquakes.country."""
     query = """
         SELECT country_name
-        FROM earthquakes.country
+        FROM public.country
         WHERE country_id = %s
         LIMIT 1;
     """

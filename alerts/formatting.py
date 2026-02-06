@@ -1,7 +1,7 @@
 """Python script containing the formatting functions"""
 from __future__ import annotations
 
-from .classes import EarthquakeEvent
+from classes import EarthquakeEvent
 
 
 def format_subject(event: EarthquakeEvent) -> str:

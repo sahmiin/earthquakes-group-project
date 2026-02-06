@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD ["alerts.lambda_handler"]
+CMD ["handler.lambda_handler"]

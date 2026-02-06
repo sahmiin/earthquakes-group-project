@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from .classes import Subscriber, EarthquakeEvent
+from classes import Subscriber, EarthquakeEvent
 
 
 def matches(sub: Subscriber, event: EarthquakeEvent) -> bool:
