@@ -7,7 +7,8 @@ from classes import EarthquakeEvent
 def format_subject(event: EarthquakeEvent) -> str:
     """Formats the subject of the alert"""
     country = event.country_name or f"country_id={event.country_id}"
-    return f"Earthquake alert: M{event.magnitude:.1f} in {country}"
+    where = f" - {event.place}" if event.place else ""
+    return f"Earthquake alert: M{event.magnitude:.1f} in {country}{where}"[:100]
 
 
 def format_body(event: EarthquakeEvent) -> str:
