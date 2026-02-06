@@ -72,6 +72,12 @@ DB_PORT=XXXX
 API_KEY=XXXX
 ```
 
+To run the entire project, including all terraform and resource application, simply run:
+
+```
+sh start.sh
+```
+
 ## Architecture Diagram & ERD 🧩
 
 ![ERD Diagram](quake_erd_ver1.png)
