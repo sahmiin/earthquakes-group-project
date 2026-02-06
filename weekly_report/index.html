@@ -3,21 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { font-family: Arial, sans-serif; font-size: 12px; line-height: 1.4; }
-        h1, h2 { text-align: center; }
-        ul { list-style-type: none; padding: 0; margin: 10px 0; }
-        ul li { margin-bottom: 4px; }
-        table { width: 60%; margin: 20px auto; border-collapse: collapse; }
-        th, td { border: 1px solid #333; padding: 8px; text-align: center; }
-        th { background-color: #db7093; }
+    <style type="text/css">
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 11px;
+            line-height: 1.4;
+            color: #121b2f;
+        }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #121b2f;
+            margin-bottom: 20px;
+        }
+
+        .header-title {
+            text-align: center;
+            padding: 12px;
+            color: #bac7c8;
+        }
+
+        .header-title h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #bac7c8;
+        }
+
+        .header-title p {
+            margin: 4px 0 0;
+            font-size: 11px;
+            color: #bac7c8;
+        }
+
+        .header-logo {
+            width: 80px;
+            padding: 10px;
+            text-align: right;
+            vertical-align: top;
+        }
+
+        .header-logo img {
+            height: 100px;
+            width: 100px;
+        }
+
+        h2 {
+            font-size: 14px;
+            color: #121b2f;
+            border-bottom: 2px solid #d8c2ad;
+            padding-bottom: 4px;
+            margin-top: 25px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 10px auto 20px;
+            width: 70%;
+        }
+
+        ul li {
+            padding: 6px 0;
+            border-bottom: 1px solid #bac7c8;
+        }
+
+        table {
+            width: 70%;
+            margin: 10px auto 30px;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #121b2f;
+            color: #ffffff;
+            padding: 6px;
+            border: 1px solid #121b2f;
+            font-size: 11px;
+        }
+
+        td {
+            padding: 6px;
+            border: 1px solid #bac7c8;
+            text-align: center;
+            font-size: 11px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #666666;
+            margin-top: 40px;
+        }
     </style>
+
     <title>Weekly Earthquakes Report</title>
-    <h1>Your Weekly Earthquakes Update 🌋</h1>
-    <!-- STATS_PLACEHOLDER -->
-    <!-- TOP_COUNTRIES_PLACEHOLDER -->
 </head>
+
 <body>
-    
+
+    <table class="header-table">
+        <tr>
+            <td class="header-title">
+                <h1>Your Weekly Earthquake Report</h1>
+                <p>Summary of global seismic activity</p>
+            </td>
+            <td class="header-logo">
+                <img src="logo.png" alt="Tremorlytics Logo" />
+            </td>
+        </tr>
+    </table>
+
+    <!-- STATS_PLACEHOLDER -->
+
+    <!-- TOP_COUNTRIES_PLACEHOLDER -->
+
+    <div class="footer">
+        <p>Ⓒ Tremorlytics</p>
+    </div>
+
 </body>
 </html>

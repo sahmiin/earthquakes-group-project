@@ -1,37 +1,44 @@
 """This script contains helper functions to handle the SES sender for the weekly report."""
 
 import logging
+from datetime import datetime
 from os import environ as ENV
 
-import boto3
+from boto3 import client
+from botocore.config import Config
 from email.message import EmailMessage
 
 logging.basicConfig(level=logging.INFO)
 
-SES_CLIENT = boto3.client("ses", region_name=ENV.get("AWS_REGION"))
+SES_CLIENT = client("ses", config=Config(connect_timeout=240, retries={'max_attempts': 2}), 
+                    region_name=ENV.get("AWS_REGION", "eu-west-2"))
 SENDER = ENV.get("SES_SENDER")
 
-def send_report_email(recipients: list, pdf_path: str, report_date: str):
-    """Sends the weekly earthquake report PDF via AWS SES."""
-
-    if not recipients:
+def create_main_message(subscribers: list) -> EmailMessage:
+    """Creates skeleton message for PDF to be attached to."""
+    if not subscribers:
         logging.warning("No recipients provided, skipping email.")
         return
 
     msg = EmailMessage()
-    msg["Subject"] = f"Weekly Earthquake Report – {report_date}"
+    msg["Subject"] = f"Weekly Earthquake Report – {datetime.now()}"
     msg["From"] = SENDER
-    msg["To"] = ", ".join(recipients)
+    msg["To"] = ", ".join(subscribers)
     
     msg.set_content(f"""
-                    Hello,
+                    Hello ,
                     
                     We hope you are well! Attached is your weekly earthquake report.
 
                     Kind regards,
-                    [Group Name]
+                    The Tremorlytics Team
                     """)
+    
+    return msg
 
+
+def send_report_email(msg: EmailMessage, pdf_path: str, subscribers: str):
+    """Sends the weekly earthquake report PDF via AWS SES."""
     try:
         with open(pdf_path, "rb") as f:
             pdf_bytes = f.read()
@@ -39,19 +46,15 @@ def send_report_email(recipients: list, pdf_path: str, report_date: str):
             pdf_bytes,
             maintype="application",
             subtype="pdf",
-            filename=f"earthquake_report_{report_date}.pdf"
+            filename=f"earthquake_report_{datetime.now()}.pdf"
         )
     except Exception as e:
         logging.error(f"Failed to read or attach PDF: {e}")
         raise
 
-    try:
-        SES_CLIENT.send_raw_email(
+    SES_CLIENT.send_raw_email(
             Source=SENDER,
-            Destinations=recipients,
+            Destinations=subscribers,
             RawMessage={"Data": msg.as_bytes()}
         )
-        logging.info(f"Email sent to {len(recipients)} recipients.")
-    except Exception as e:
-        logging.error(f"Failed to send email via SES: {e}")
-        raise
+    logging.info(f"Email sent to {len(subscribers)} recipients.")

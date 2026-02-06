@@ -4,6 +4,7 @@ import logging
 from os import environ as ENV
 
 import pandas as pd
+from dotenv import load_dotenv
 from psycopg2 import connect, Error
 from dotenv import load_dotenv
 from psycopg2.extensions import connection
@@ -20,6 +21,7 @@ def get_db_connection() -> connection:
             port=ENV.get("DB_PORT"),
             database=ENV.get("DB_NAME")
         )
+        logging.info("Successfully connected to database.")
         return connection
     except Error as e:
         logging.warning(f"Error connecting to database: {e}.")
@@ -29,7 +31,7 @@ def get_db_connection() -> connection:
 def fetch_earthquake_data(conn: connection) -> pd.DataFrame:
     """Returns the week's worth of earthquake data as a dataframe."""
     query = """
-            SELECT *
+            SELECT event_id, magnitude_value, depth, country_name
             FROM event e 
             JOIN country c
             ON (e.country_id = c.country_id)
@@ -44,7 +46,7 @@ def fetch_earthquake_data(conn: connection) -> pd.DataFrame:
 def fetch_subscribers(conn: connection) -> list:
     """Returns the weekly subscriber list."""
     with conn.cursor() as curs:
-        curs.execute("SELECT subscriber_email FROM subscribers WHERE weekly=true")
+        curs.execute("SELECT subscriber_email FROM subscriber WHERE weekly=true")
         return [r[0] for r in curs.fetchall()]
 
 

@@ -27,23 +27,29 @@ def inject_stats(template_html: str, stats: dict) -> str:
 
 
 def inject_top_countries(template_html: str, top_countries_df: pd.DataFrame, top_n: int = 5) -> str:
-    """Inject the table of top affected countries into the HTML template."""
-    rows_html = ""
-    for _, row in top_countries_df.head(top_n).iterrows():
-        rows_html += f"<tr><td>{row['country_name']}</td><td>{row['quake_count']}</td></tr>"
+    """Inject the table of top affected countries into the HTML template. Defaults to top 5."""
+    table_html = (
+        top_countries_df
+        .loc[:, ["country_name", "quake_count"]]
+        .head(top_n)
+        .rename(
+            columns={
+                "country_name": "Country",
+                "quake_count": "Number of Quakes",
+            }
+        )
+        .to_html(
+            index=False,
+            border=0,
+            escape=True,
+        )
+    )
 
-    table_html = f"""
+    section_html = f"""
     <h2>Top {top_n} Affected Countries</h2>
-    <table>
-        <thead>
-            <tr><th>Country</th><th>Number of Quakes</th></tr>
-        </thead>
-        <tbody>
-            {rows_html}
-        </tbody>
-    </table>
+    {table_html}
     """
-    return template_html.replace("<!-- TOP_COUNTRIES_PLACEHOLDER -->", table_html)
+    return template_html.replace("<!-- TOP_COUNTRIES_PLACEHOLDER -->", section_html)
 
 
 def generate_pdf(df: pd.DataFrame, template_path: str, output_path: str):
@@ -61,17 +67,12 @@ def generate_pdf(df: pd.DataFrame, template_path: str, output_path: str):
         result = pisa.CreatePDF(src=html, dest=pdf_file)
     if result.err:
         logging.error("Error generating PDF.")
-        raise Exception("PDF generation failed.")
 
     logging.info(f"PDF successfully generated at {output_path}")
 
 if __name__ == '__main__':
     load_dotenv()
     conn = get_db_connection()
-    quake_data = fetch_earthquake_data(conn)
-
-    generate_pdf(
-        df=quake_data,
-        template_path="index.html",
-        output_path="weekly_earthquake_report.pdf"
-    )
+    data = fetch_earthquake_data(conn)
+    
+    generate_pdf(data, 'index.html', 'report.pdf')
