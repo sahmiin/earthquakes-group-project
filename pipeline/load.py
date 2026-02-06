@@ -34,19 +34,46 @@ def get_location_id(conn, new_events):
         cur.execute("SELECT country_code, country_id FROM country;")
         country_codes_lookup = dict(cur.fetchall())
 
+    existing_event_countries = get_existing_event_countries(conn, new_events)
+
     key = ENV["API_KEY"]
     geocoder = OpenCageGeocode(key)
+
     for e in new_events:
+        event_id = e["usgs_event_id"]
+        if event_id in existing_event_countries:
+            e["country_id"] = existing_event_countries[event_id]
+            continue
+
         result = geocoder.reverse_geocode(e["latitude"], e["longitude"])
         components = result[0].get("components", {})
         country_code = components.get("country_code")
+
         if not country_code:
             e["country_id"] = country_codes_lookup["IW"]
         else:
-            country_code_upper = country_code.upper()
-            e["country_id"] = country_codes_lookup[country_code_upper]
+            e["country_id"] = country_codes_lookup[country_code.upper()]
 
     return new_events
+
+
+def get_existing_event_countries(conn, new_events):
+    """Selects all event ids and country ids already in the database"""
+    event_ids = [e["usgs_event_id"] for e in new_events]
+
+    if not event_ids:
+        return {}
+
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            SELECT usgs_event_id, country_id
+            FROM event
+            WHERE usgs_event_id = ANY(%s);
+            """,
+            (event_ids,)
+        )
+        return dict(cur.fetchall())
 
 
 def upload_data(conn, new_events):
