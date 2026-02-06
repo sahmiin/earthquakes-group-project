@@ -48,7 +48,7 @@ CREATE TABLE "subscriber"(
     "subscriber_name" VARCHAR(255) NOT NULL,
     "subscriber_email" TEXT NOT NULL,
     "weekly" BOOLEAN NOT NULL,
-    "country_id" SMALLINT NOT NULL,
+    "country_id" SMALLINT,
     "magnitude_value" FLOAT(53) NOT NULL
 );
 ALTER TABLE
