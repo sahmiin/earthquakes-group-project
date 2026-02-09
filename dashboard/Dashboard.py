@@ -79,6 +79,7 @@ with c1:
 
 
 df = load_earthquakes(start_dt, end_dt)
+st.session_state["df"] = df
 
 display_metrics(
     total_quakes(df),
