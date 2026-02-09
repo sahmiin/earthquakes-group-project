@@ -42,7 +42,7 @@ def index():
                         ORDER BY start_time 
                         LIMIT 1;
                         """)
-        most_recent_earthquake = curs.fetchall()
+            most_recent_earthquake = curs.fetchall()
 
         return [most_recent_earthquake]
     except Error as e:
