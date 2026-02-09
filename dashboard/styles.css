@@ -80,7 +80,7 @@ button {
 }
 
 button:hover {
-  background-color: #C8963E;
+  color: #f6617a;
 }
 
 input,
@@ -157,7 +157,7 @@ div[data-baseweb="select"] > div:focus-within {
     color: #C8963E;
 }
 
-/* metics boxes*/
+/* metrics boxes*/
 [data-testid="stMetricLabel"] {
     color: #121B2F !important;
 }

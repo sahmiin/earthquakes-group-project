@@ -1,4 +1,5 @@
 """Main dashboard page"""
+import os
 from pathlib import Path
 import base64
 import altair as alt
@@ -47,14 +48,15 @@ def sidebar_logo(path: str, bg="#121B2F", pad="0", radius="0px"):
         f"""
         <div style="background:{bg}; padding:{pad}; border-radius:{radius}; text-align:center;">
             <img src="data:image/png;base64,{b64}"
-                 style="width:100%; height:auto; display:block; margin:0 auto;" />
+                style="width:100%; height:auto; display:block; margin:0 auto;" />
         </div>
         """,
         unsafe_allow_html=True,
     )
 
 
-logo_path = Path(__file__).resolve().parent / "assets" / "tremorlytics.png"
+logo_path = os.path.join(os.path.dirname(__file__),
+                        "assets/tremorlytics.png")
 sidebar_logo(str(logo_path))
 
 alt.themes.register("tremor", tremor_theme)
@@ -63,8 +65,9 @@ alt.themes.enable("tremor")
 
 st.set_page_config(page_title="Earthquake Monitor", layout="wide")
 
-
-with open("styles.css") as f:
+style_sheet = os.path.join(os.path.dirname(__file__),
+                        "styles.css")
+with open(str(style_sheet)) as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 
