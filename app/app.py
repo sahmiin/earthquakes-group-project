@@ -40,7 +40,7 @@ def index():
         with connection.cursor(cursor_factory=RealDictCursor) as curs:
             curs.execute("""
                        SELECT * FROM event
-                        ORDER BY start_time 
+                        ORDER BY start_time DESC 
                         LIMIT 1;
                         """)
             most_recent_earthquake = curs.fetchall()
