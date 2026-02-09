@@ -20,3 +20,7 @@ def test_check_for_text_default(event_missing_value):
 
 def test_extract_data_success(mock_requests_get):
     assert len(extract_data()) == 1
+
+def test_extract_data_success_2(mock_requests_get):
+    data = extract_data()
+    assert data[0]["start_time"] == "2026-02-05T05:34:12.000Z"
