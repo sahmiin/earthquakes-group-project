@@ -37,25 +37,25 @@ def tremor_theme():
     }
 
 
-def sidebar_logo(path: str, bg="#121B2F", pad="0", radius="0px"):
-    """Positions Tremorlytics logo."""
+# def sidebar_logo(path: str, bg="#121B2F", pad="0", radius="0px"):
+#     """Positions Tremorlytics logo."""
 
-    data = Path(path).read_bytes()
-    b64 = base64.b64encode(data).decode()
+#     data = Path(path).read_bytes()
+#     b64 = base64.b64encode(data).decode()
 
-    st.sidebar.markdown(
-        f"""
-        <div style="background:{bg}; padding:{pad}; border-radius:{radius}; text-align:center;">
-            <img src="data:image/png;base64,{b64}"
-                 style="width:100%; height:auto; display:block; margin:0 auto;" />
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+#     st.sidebar.markdown(
+#         f"""
+#         <div style="background:{bg}; padding:{pad}; border-radius:{radius}; text-align:center;">
+#             <img src="data:image/png;base64,{b64}"
+#                  style="width:100%; height:auto; display:block; margin:0 auto;" />
+#         </div>
+#         """,
+#         unsafe_allow_html=True,
+#     )
 
 
-logo_path = Path(__file__).resolve().parent / "assets" / "tremorlytics.png"
-sidebar_logo(str(logo_path))
+# logo_path = Path(__file__).resolve().parent / "assets" / "tremorlytics.png"
+# sidebar_logo(str(logo_path))
 
 alt.themes.register("tremor", tremor_theme)
 alt.themes.enable("tremor")
