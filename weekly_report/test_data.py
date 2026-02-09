@@ -2,7 +2,6 @@
 
 from unittest.mock import MagicMock, patch
 
-import pytest
 import pandas as pd
 
 from data import fetch_earthquake_data, fetch_subscribers, get_statistics, get_top_countries

@@ -1,11 +1,7 @@
 """This script contains simple tests for the SES helper functions."""
 
-import os
-import tempfile
 from email.message import EmailMessage
-from unittest.mock import patch, MagicMock
-
-import pytest
+from unittest.mock import patch
 
 import ses_helper
 from ses_helper import SES_CLIENT, SENDER, create_main_message, send_report_email
