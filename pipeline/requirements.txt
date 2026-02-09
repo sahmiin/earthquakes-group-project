@@ -2,6 +2,7 @@ bs4
 requests
 pylint
 pytest
+pytest-mock
 python-dotenv
 lxml
 psycopg2-binary
