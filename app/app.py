@@ -12,6 +12,7 @@ from psycopg2 import Error
 
 app = Flask(__name__)
 
+
 def get_db_connection() -> connection:
     load_dotenv()
     try:
@@ -42,7 +43,7 @@ def index():
                         ORDER BY start_time 
                         LIMIT 1;
                         """)
-        most_recent_earthquake = curs.fetchall()
+            most_recent_earthquake = curs.fetchall()
 
         return [most_recent_earthquake]
     except Error as e:
@@ -97,8 +98,8 @@ def get_earthquakes_in_country(country_name):
                        SELECT * FROM event e
                         JOIN country c ON (e.country_id = c.country_id) 
                         WHERE country_name ILIKE %s;
-                        """, 
-                        (f"%{country_name}%",))
+                        """,
+                       (f"%{country_name}%",))
         earthquake = cursor.fetchone()
         if earthquake:
             return jsonify(earthquake)
@@ -151,18 +152,18 @@ def get_earthquakes_of_certain_magnitude(mag):
     connection = get_db_connection()
     if not connection:
         return {"error": "Database connection failed."}, 500
-    
+
     if not 0 <= float(mag) <= 10:
         return {'error': "Invalid magnitude value."}, 500
-    
+
     try:
         cursor = connection.cursor(cursor_factory=RealDictCursor)
         cursor.execute("""
                        SELECT * FROM event e
                         JOIN country c ON (e.country_id = c.country_id) 
-                        WHERE magnitude_value = %s;
+                        WHERE magnitude_value >= %s;
                         """,
-                        (mag,))
+                       (mag,))
         earthquakes = cursor.fetchall()
         return jsonify(earthquakes)
     except Error as e:
