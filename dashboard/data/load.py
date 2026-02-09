@@ -1,3 +1,4 @@
+"""Functions to connect and load data"""
 import os
 import pandas as pd
 import streamlit as st
@@ -7,7 +8,7 @@ load_dotenv()
 
 
 def get_engine():
-    """ Create a SQLAlchemy engine for the RDS database"""
+    """ Create a SQLAlchemy engine for the RDS database."""
     DB_HOST = os.getenv("HOST_NAME")
     DB_PORT = os.getenv("PORT", "5432")
     DB_NAME = os.getenv("DB_NAME")
@@ -24,7 +25,7 @@ def get_engine():
 
 @st.cache_data(ttl=120)
 def load_earthquakes(start_dt, end_dt):
-    """ Load earthquakes data between the timeframe set """
+    """ Load earthquakes data between the timeframe set."""
     engine = get_engine()
 
     query = text("""

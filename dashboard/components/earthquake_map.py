@@ -1,3 +1,4 @@
+"""Earthquake map showcasing earthquakes from time period."""
 from __future__ import annotations
 
 import pydeck as pdk
@@ -6,6 +7,7 @@ import pandas as pd
 
 
 def render_quake_map(df: pd.DataFrame) -> None:
+    """Renders map with red points showcasing earthquakes based on loaded data."""
     if df is None or df.empty:
         st.info("No earthquakes found for the selected filters/time period.")
         return

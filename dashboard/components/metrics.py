@@ -1,3 +1,4 @@
+"""Function to display key metrics"""
 import streamlit as st
 import pandas as pd
 
@@ -14,7 +15,7 @@ def display_metrics(
     c1, c2, c3 = st.columns(3, gap="large")
 
     with c1:
-        st.metric("Total Quakes", total_quakes)
+        st.metric("Total Quakes", total_quakes, )
     with c2:
         st.metric("Max Magnitude", max_magnitude)
     with c3:

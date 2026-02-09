@@ -1,10 +1,11 @@
+"""Function to render chart"""
 import pandas as pd
 import streamlit as st
 import altair as alt
 
 
 def render_top_countries(df: pd.DataFrame, top_n: int = 10) -> None:
-    """Renders a top countries with earthquake chart."""
+    """Renders a top countries with earthquakes chart."""
     st.markdown("#### Top affected countries")
 
     if df is None or df.empty:

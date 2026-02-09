@@ -1,3 +1,6 @@
+"""Functions to calculate key metrics"""
+
+
 def total_quakes(df):
     """Total number of earthquakes in timeframe."""
     return int(len(df))
@@ -18,7 +21,7 @@ def average_magnitude(df):
 
 
 def deepest(df):
-    """Deepest earthquake (km)"""
+    """Deepest earthquake (km)."""
     if df.empty:
         return "—"
 
@@ -27,7 +30,7 @@ def deepest(df):
 
 
 def shallowest(df):
-    """Shallowest earthquake (km)"""
+    """Shallowest earthquake (km)."""
     if df.empty:
         return "—"
 

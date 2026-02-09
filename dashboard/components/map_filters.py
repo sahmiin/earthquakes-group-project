@@ -1,3 +1,4 @@
+"""Filters for earthquake map"""
 from __future__ import annotations
 
 import pandas as pd
@@ -5,9 +6,7 @@ import streamlit as st
 
 
 def apply_map_filters(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Filters using magnitude and country name
-    """
+    """Filters using magnitude and country name."""
     if df is None:
         return pd.DataFrame()
 

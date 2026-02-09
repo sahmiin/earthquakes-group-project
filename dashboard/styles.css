@@ -1,13 +1,19 @@
+/* Styling for dashboard.*/
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
+/* containers*/
 html, body, [class*="css"]  {
   font-family: "Roboto", sans-serif;
 }
 
-
 .block-container {
   padding-top: 1.2rem;
   padding-bottom: 2rem;
+  background-color: #D8C2AD;
+}
+
+header[data-testid="stHeader"] {
+    background-color: #D8C2AD;
 }
 
 .dashboard-title {
@@ -33,5 +39,131 @@ html, body, [class*="css"]  {
   font-weight: 600;
 }
 
+
+
+/* main background*/
+[data-testid="stApp"],
+[data-testid="stAppViewContainer"],
+[data-testid="stAppViewContainer"] > .main {
+  background-color: #D8C2AD;
+  color: #121B2F;
+}
+
+/* the sidebar*/
+section[data-testid="stSidebar"] {
+  background-color: #121B2F;
+}
+
+section[data-testid="stSidebar"] * {
+  color: #C8963E;
+}
+
+div[data-testid="stVerticalBlock"],
+div[data-testid="stHorizontalBlock"],
+div[data-testid="stBlock"],
+form {
+  background-color: #D8C2AD;
+  color: #121B2F;
+}
+
+div[data-testid="stChart"],
+div[data-testid="stAltairChart"],
+div[data-testid="stPydeckChart"],
+div[data-testid="stPlotlyChart"] {
+  background-color: #D8C2AD;
+}
+
+button {
+  background-color: #D8C2AD;
+  color: #121B2F;
+  border: 1px solid rgba(18, 27, 47, 0.3);
+}
+
+button:hover {
+  background-color: #C8963E;
+}
+
+input,
+textarea,
+select,
+div[data-baseweb="input"],
+div[data-baseweb="select"],
+div[data-baseweb="slider"] {
+  background-color: #D8C2AD;
+  color: #121B2F;
+  border-color: rgba(18, 27, 47, 0.3);
+}
+
+.sidebar-logo {
+    background-color: #121B2F;
+    padding: 1rem;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.sidebar-logo img {
+    max-width: 100%;
+}
+
+
+/* for buttons */
+div.stButton > button {
+    background-color: #121B2F;
+    color: #C8963E !important;
+    border-radius: 8px;
+}
+
+
+/* for sliders*/
+div[data-baseweb="slider"] * {
+    color: #121B2F !important;
+}
+
+
+div[data-baseweb="slider"] > div > div > div {
+    background-color: #C8963E !important;
+}
+
+
+div[data-baseweb="slider"] [role="slider"] {
+    background-color: #121B2F !important;
+    border-color: #121B2F !important;
+}
+
+/* the select box */
+div[data-baseweb="select"] > div {
+    background-color: #121B2F !important;
+    border-color: #C8963E !important;
+}
+
+div[data-baseweb="select"] span {
+    color: #D8C2AD !important;
+}
+
+div[data-baseweb="select"] svg {
+    fill: #C8963E !important;
+}
+
+ul[role="listbox"] li {
+    color: #C8963E !important;
+}
+
+div[data-baseweb="select"] > div:hover {
+    border-color: #C8963E !important;
+}
+
+div[data-baseweb="select"] > div:focus-within {
+    box-shadow: 0 0 0 2px rgba(18, 27, 47, 0.4) !important;
+    color: #C8963E;
+}
+
+/* metics boxes*/
+[data-testid="stMetricLabel"] {
+    color: #121B2F !important;
+}
+
+[data-testid="stMetricValue"] {
+    color: #121B2F !important;
+}
 
 
