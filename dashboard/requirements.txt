@@ -5,3 +5,4 @@ sqlalchemy
 load-dotenv
 pydeck
 altair
+psycopg2
