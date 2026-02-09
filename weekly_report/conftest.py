@@ -1,6 +1,9 @@
-"""Pytest fixtures to be used across all tests in this directory."""
+"""This script contains fixtures to be used across all tests in this directory."""
 
+import os
+import tempfile
 from unittest.mock import MagicMock
+
 import pytest
 import pandas as pd
 
@@ -13,7 +16,6 @@ def mock_db():
         mock_cursor.fetchall.return_value = rows
         mock_cursor.fetchone.side_effect = lambda: rows[0] if rows else None
 
-        # Support 'with' statements
         mock_cursor.__enter__.return_value = mock_cursor
         mock_cursor.__exit__.return_value = None
 
@@ -89,3 +91,15 @@ def fake_subscribers():
         {"subscriber_email": "test1@example.com"},
         {"subscriber_email": "test2@example.com"}
     ]
+
+
+@pytest.fixture
+def temp_pdf():
+    """Create a temporary PDF file and clean it up after the test."""
+    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+    tmp.write(b"%PDF-1.4 fake pdf content")
+    tmp.close()
+
+    yield tmp.name
+
+    os.unlink(tmp.name)

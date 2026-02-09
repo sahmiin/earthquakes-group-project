@@ -4,6 +4,7 @@ from generate_pdf import inject_stats, inject_top_countries
 
 
 def test_inject_stats(df_earthquakes):
+    """Tests that html replaces placeholder correctly."""
     template = "<html><!-- STATS_PLACEHOLDER --></html>"
     stats = {
         "total_earthquakes": 4,
@@ -23,6 +24,7 @@ def test_inject_stats(df_earthquakes):
 
 
 def test_inject_top_countries(df_earthquakes):
+    """Tests that html replaces placeholder correctly."""
     template = "<html><!-- TOP_COUNTRIES_PLACEHOLDER --></html>"
     
     top_countries = (
