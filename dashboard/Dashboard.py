@@ -54,7 +54,8 @@ def sidebar_logo(path: str, bg="#121B2F", pad="0", radius="0px"):
     )
 
 
-sidebar_logo("assets/tremorlytics.png")
+logo_path = Path(__file__).resolve().parent / "assets" / "tremorlytics.png"
+sidebar_logo(str(logo_path))
 
 alt.themes.register("tremor", tremor_theme)
 alt.themes.enable("tremor")
