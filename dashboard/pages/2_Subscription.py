@@ -31,7 +31,7 @@ def sidebar_logo(path: str, bg="#121B2F", pad="0", radius="0px"):
 
 
 logo_path = os.path.join(os.path.dirname(__file__),
-                        "assets/tremorlytics.png")
+                        "../assets/tremorlytics.png")
 sidebar_logo(str(logo_path))
 
 
