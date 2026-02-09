@@ -364,22 +364,6 @@ resource "aws_cloudwatch_event_rule" "weekly_report" {
   tags = local.common_tags
 }
 
-
-resource "aws_lambda_function" "weekly_report" {
-  count = var.enable_weekly_report_lambda ? 1 : 0
-  function_name = "${local.name_prefix}-weekly-report-lambda"
-  role = aws_iam_role.lambda_exec.arn
-
-  package_type = "Image"
-  image_uri = var.weekly_report_lambda_image_uri
-
-  timeout = var.lambda_timeout
-  memory_size = var.lambda_memory_mb
-
-  tags = local.common_tags
-  
-}
-
 resource "aws_cloudwatch_event_target" "weekly_report_target" {
   count = var.enable_weekly_report_lambda ? 1 : 0
   rule = aws_cloudwatch_event_rule.weekly_report.name

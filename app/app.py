@@ -3,6 +3,7 @@
 from os import environ as ENV
 
 import psycopg2
+from psycopg2 import connect
 from dotenv import load_dotenv
 from flask import Flask, jsonify
 from psycopg2.extras import RealDictCursor
@@ -11,10 +12,11 @@ from psycopg2 import Error
 
 app = Flask(__name__)
 
+
 def get_db_connection() -> connection:
     load_dotenv()
     try:
-        connection = psycopg2.connect(
+        connection = connect(
             user=ENV.get("DB_USERNAME"),
             password=ENV.get("DB_PASSWORD"),
             host=ENV.get("DB_HOST"),
@@ -35,48 +37,55 @@ def index():
         return {"error": "Database connection failed."}, 500
 
     try:
-        cursor = connection.cursor(cursor_factory=RealDictCursor)
-        cursor.execute("""
+        with connection.cursor(cursor_factory=RealDictCursor) as curs:
+            curs.execute("""
                        SELECT * FROM event
-                        ORDER BY start_time 
+                        ORDER BY start_time DESC 
                         LIMIT 1;
                         """)
-        most_recent_earthquake = cursor.fetchall()
+            most_recent_earthquake = curs.fetchall()
 
         return [most_recent_earthquake]
     except Error as e:
         return {"error": str(e)}, 500
     finally:
         if connection:
-            cursor.close()
             connection.close()
 
 
-@app.route('/recent')
-def get_all_recent_earthquakes():
-    """Returns all recent earthquakes in alphabetical order of country name."""
+@app.route('/recent', defaults={'limit': 20})
+@app.route('/recent/<int:limit>')
+def get_all_recent_earthquakes(limit):
+    """Returns the most recent earthquakes, default 20."""
     connection = get_db_connection()
     if not connection:
         return {"error": "Database connection failed."}, 500
-    
+
     try:
-        cursor = connection.cursor(cursor_factory=RealDictCursor)
-        cursor.execute("""
-                       SELECT * FROM event e
-                        JOIN country c ON (e.country_id = c.country_id) 
-                        ORDER BY country_name;
-                        """)
-        earthquakes = cursor.fetchall()
-        return jsonify(dict(earthquakes))
+        with connection.cursor(cursor_factory=RealDictCursor) as curs:
+            curs.execute(
+                """
+                SELECT *
+                FROM event e
+                JOIN country c ON e.country_id = c.country_id
+                ORDER BY start_time DESC
+                LIMIT %s;
+                """,
+                (limit,)
+            )
+            earthquakes = curs.fetchall()
+
+        return jsonify(earthquakes)
+
     except Error as e:
         return {"error": str(e)}, 500
+
     finally:
         if connection:
-            cursor.close()
             connection.close()
 
 
-@app.route('/<int:country_name>')
+@app.route('/<country_name>')
 def get_earthquakes_in_country(country_name):
     """Returns recent earthquakes from a given country."""
     connection = get_db_connection()
@@ -88,12 +97,12 @@ def get_earthquakes_in_country(country_name):
         cursor.execute("""
                        SELECT * FROM event e
                         JOIN country c ON (e.country_id = c.country_id) 
-                        WHERE country_name = %s;
-                        """, 
-                        (country_name,))
+                        WHERE country_name ILIKE %s;
+                        """,
+                       (f"%{country_name}%",))
         earthquake = cursor.fetchone()
         if earthquake:
-            return dict(earthquake)
+            return jsonify(earthquake)
         return {"error": "No recent earthquakes here."}, 404
     except Error as e:
         return {"error": str(e)}, 500
@@ -105,42 +114,48 @@ def get_earthquakes_in_country(country_name):
 
 @app.route('/magnitude/<string:order>')
 def get_earthquakes_ordered_by_magnitude(order):
-    """Returns all recent earthquakes in a given order of magnitude."""
+    """Returns all earthquakes in a given order of magnitude."""
     connection = get_db_connection()
     if not connection:
         return {"error": "Database connection failed."}, 500
-    
-    if order != 'asc' or order != 'desc':
-        return {'error': "Invalid order direction."}, 500
-    
+
+    order = order.lower()
+    if order not in ("asc", "desc"):
+        return {"error": "Invalid order direction."}, 400
+
     try:
         cursor = connection.cursor(cursor_factory=RealDictCursor)
-        cursor.execute("""
-                       SELECT * FROM event e
-                        JOIN country c ON (e.country_id = c.country_id) 
-                        ORDER BY magnitude_value %s;
-                        """,
-                        (order,))
+
+        query = f"""
+            SELECT *
+            FROM event e
+            JOIN country c ON e.country_id = c.country_id
+            ORDER BY magnitude_value {order.upper()};
+        """
+
+        cursor.execute(query)
         earthquakes = cursor.fetchall()
-        return dict(earthquakes)
+        return jsonify(earthquakes)
+
     except Error as e:
         return {"error": str(e)}, 500
+
     finally:
         if connection:
             cursor.close()
             connection.close()
 
 
-@app.route('/magnitude/<int:mag>')
+@app.route('/magnitude/<float:mag>')
 def get_earthquakes_of_certain_magnitude(mag):
     """Returns only earthquakes that are of the given magnitude or higher."""
     connection = get_db_connection()
     if not connection:
         return {"error": "Database connection failed."}, 500
-    
-    if not 0 < mag < 10:
+
+    if not 0 <= float(mag) <= 10:
         return {'error': "Invalid magnitude value."}, 500
-    
+
     try:
         cursor = connection.cursor(cursor_factory=RealDictCursor)
         cursor.execute("""
@@ -148,9 +163,9 @@ def get_earthquakes_of_certain_magnitude(mag):
                         JOIN country c ON (e.country_id = c.country_id) 
                         WHERE magnitude_value >= %s;
                         """,
-                        (mag,))
+                       (mag,))
         earthquakes = cursor.fetchall()
-        return dict(earthquakes)
+        return jsonify(earthquakes)
     except Error as e:
         return {"error": str(e)}, 500
     finally:

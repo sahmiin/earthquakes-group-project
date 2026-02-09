@@ -58,8 +58,10 @@ def convert_datatypes(df: pd.DataFrame) -> pd.DataFrame:
         df["used_phase_count"], errors="coerce").astype("Int64")
     df["used_station_count"] = pd.to_numeric(
         df["used_station_count"], errors="coerce").astype("Int64")
-    df["azimuthal_gap"] = pd.to_numeric(
-        df["azimuthal_gap"], errors="coerce").astype("Int64")
+    df["azimuthal_gap"] = (
+        pd.to_numeric(df["azimuthal_gap"], errors="coerce")
+        .round()
+        .astype("Int64"))
 
     return df
 
