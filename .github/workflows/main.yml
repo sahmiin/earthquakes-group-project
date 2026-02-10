@@ -1,0 +1,41 @@
+# on:
+#     push:
+#         branches:
+#             - main
+#     workflow_dispatch:
+
+# jobs:
+#     hello_world:
+#         name: "Status"
+#         runs-on: ubuntu-latest
+#         steps:
+#             - name: "Initialising"
+#               run: echo Initialising
+#     testing:
+#       name: "Run Tests"
+#       runs-on: ubuntu-latest
+
+#       steps:
+#           - name: "Get repository"
+#             uses: actions/checkout@v6
+#           - name: "Install Python"
+#             uses: actions/setup-python@v6
+#           - name: "Install libraries"
+#             run: pip install -r pipeline/requirements.txt
+#           - name: "Run tests"
+#             run: pytest
+#     pylinting:
+#       name: "Run Pylint"
+#       runs-on: ubuntu-latest
+      
+#       steps:
+#           - name: "Get repository"
+#             uses: actions/checkout@v6
+#           - name: "Install Python"
+#             uses: actions/setup-python@v6
+#           - name: "Install libraries"
+#             run: pip install -r pipeline/requirements.txt
+#           - name: "Run Pylint"
+#             run: pylint --fail-under=8 dashboard/*.py \ 
+#                 && pylint --fail-under=8 pipeline/*.py \ 
+#                 && pylint --fail-under=8 summary/*.py
