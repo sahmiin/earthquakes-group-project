@@ -8,12 +8,12 @@ from sqlalchemy import text
 from data.load import get_engine, load_earthquakes
 
 style_sheet = os.path.join(os.path.dirname(__file__),
-                        "../styles.css")
+                           "../styles.css")
 with open(str(style_sheet)) as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 
-def sidebar_logo(path: str, bg="#121B2F", pad="0", radius="0px"):
+def sidebar_logo(path: str, bg="#2C353C", pad="0", radius="0px"):
     """Adds Tremorlytics logo on sidebar."""
 
     data = Path(path).read_bytes()
@@ -31,7 +31,7 @@ def sidebar_logo(path: str, bg="#121B2F", pad="0", radius="0px"):
 
 
 logo_path = os.path.join(os.path.dirname(__file__),
-                        "../assets/tremorlytics.png")
+                         "../assets/tremorlytics.png")
 sidebar_logo(str(logo_path))
 
 
@@ -111,7 +111,8 @@ def insert_subscriber(name, email, weekly, country_id, magnitude_value):
         )
 
 
-st.title("Subscribe to receive alerts!")
+st.markdown("<div class='dashboard-title'>Subscribe to receive alerts!</div>",
+            unsafe_allow_html=True)
 
 end_dt = pd.Timestamp.utcnow()
 start_dt = end_dt - pd.Timedelta(days=365)

@@ -20,25 +20,25 @@ def tremor_theme():
     """Sets colour scheme for charts."""
     return {
         "config": {
-            "background": "#D8C2AD",
-            "view": {"fill": "#D8C2AD", "strokeOpacity": 0},
+            "background": "#191919",
+            "view": {"fill": "#191919", "strokeOpacity": 0},
             "axis": {
-                "labelColor": "#121B2F",
-                "titleColor": "#121B2F",
-                "gridColor": "#121B2F",
+                "labelColor": "#FFFFFF",
+                "titleColor": "#FFFFFF",
+                "gridColor": "#FFFFFF",
                 "gridOpacity": 0.15,
                 "domainColor": "#121B2F",
                 "tickColor": "#121B2F",
             },
             "legend": {"labelColor": "#121B2F", "titleColor": "#121B2F"},
             "title": {"color": "#121B2F"},
-            "mark": {"color": "#121B2F"},
+            "mark": {"color": "#EB4511"},
 
         }
     }
 
 
-def sidebar_logo(path: str, bg="#121B2F", pad="0", radius="0px"):
+def sidebar_logo(path: str, bg="#2C353C", pad="0", radius="0px"):
     """Positions Tremorlytics logo."""
 
     data = Path(path).read_bytes()
@@ -56,7 +56,7 @@ def sidebar_logo(path: str, bg="#121B2F", pad="0", radius="0px"):
 
 
 logo_path = os.path.join(os.path.dirname(__file__),
-                        "assets/tremorlytics.png")
+                         "assets/tremorlytics.png")
 sidebar_logo(str(logo_path))
 
 alt.themes.register("tremor", tremor_theme)
@@ -66,13 +66,33 @@ alt.themes.enable("tremor")
 st.set_page_config(page_title="Earthquake Monitor", layout="wide")
 
 style_sheet = os.path.join(os.path.dirname(__file__),
-                        "styles.css")
+                           "styles.css")
 with open(str(style_sheet)) as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 
-st.markdown("<div class='dashboard-title'>Tremorlytics</div>",
-            unsafe_allow_html=True)
+globe_path = os.path.join(
+    os.path.dirname(__file__),
+    "assets/tremor_logo.png"
+)
+
+with open(globe_path, "rb") as f:
+    b64 = base64.b64encode(f.read()).decode()
+
+st.markdown(
+    f"""
+    <div style="
+        display:flex;
+        justify-content:center;
+        margin:1.2rem 0 1rem 0;
+    ">
+        <img src="data:image/png;base64,{b64}"
+             style="height:120px; width:auto;" />
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 
 start_dt, end_dt, mode = timeframe_selector()
 
@@ -82,6 +102,7 @@ with c1:
 
 
 df = load_earthquakes(start_dt, end_dt)
+st.session_state["df"] = df
 
 display_metrics(
     total_quakes(df),
@@ -99,23 +120,3 @@ df_filtered = apply_map_filters(df)
 
 st.write(f"Showing **{len(df_filtered):,}** earthquakes")
 render_quake_map(df_filtered)
-
-
-st.markdown(
-    "<h3 style='text-align: center;'>Insights</h3>",
-    unsafe_allow_html=True
-)
-
-col1, col2 = st.columns(2)
-
-with col1:
-    render_earthquakes_over_time(df_filtered)
-
-with col2:
-    render_magnitude_distribution(df_filtered)
-
-st.markdown(
-    "<h3 style='text-align: center;'>Breakdown</h3>",
-    unsafe_allow_html=True
-)
-render_top_countries(df_filtered, top_n=10)

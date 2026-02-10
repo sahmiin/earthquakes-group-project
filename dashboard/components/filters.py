@@ -1,5 +1,6 @@
 """Filtering of dates for dashboard."""
 from __future__ import annotations
+import pandas as pd
 
 import streamlit as st
 from datetime import datetime, timedelta, timezone, date
@@ -67,3 +68,10 @@ def timeframe_selector():
         end_dt = datetime(e.year, e.month, e.day, 23, 59, 59, tzinfo=UTC)
 
     return start_dt, end_dt, mode
+
+
+def filter_by_timeframe(df: pd.DataFrame, start_dt, end_dt) -> pd.DataFrame:
+    d = df.copy()
+    d["start_time"] = pd.to_datetime(
+        d["start_time"], utc=True, errors="coerce")
+    return d[(d["start_time"] >= start_dt) & (d["start_time"] <= end_dt)]
