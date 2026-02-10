@@ -3,8 +3,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 
-from db_queries import fetch_subscribers, fetch_country_name
-from earthquake_queries import fetch_recent_earthquakes
+from db_queries import fetch_subscribers, fetch_country_name, fetch_recent_earthquakes
 from formatting import format_subject, format_body
 from sns_client import (
     build_filter_policy,
