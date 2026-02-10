@@ -9,12 +9,12 @@ load_dotenv()
 
 def get_engine():
     """ Create a SQLAlchemy engine for the RDS database."""
-    DB_HOST = os.getenv("HOST_NAME")
-    DB_PORT = os.getenv("PORT", "5432")
-    DB_NAME = os.getenv("DB_NAME")
-    DB_USER = os.getenv("DB_USERNAME")
-    DB_PASSWORD = os.getenv("DB_PASSWORD")
-
+    DB_HOST = st.secrets["HOST_NAME"]
+    DB_PORT = st.secrets["PORT"]
+    DB_NAME = st.secrets["DB_NAME"]
+    DB_USER = st.secrets["DB_USERNAME"]
+    DB_PASSWORD = st.secrets["DB_PASSWORD"]
+    print(DB_HOST)
     connection_url = (
         f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}"
         f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
