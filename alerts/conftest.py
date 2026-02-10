@@ -72,7 +72,7 @@ def event_japan_big():
         magnitude=9.1,
         occurred_at="2011-03-11T05:46:24Z",
         place="72 km E of Oshika, JP",
-        country_name=None
+        country_name="Japan"
     )
 
 

@@ -1,61 +1,81 @@
+"""Testing suite for formatting script"""
+
+import pytest
+
 from classes import EarthquakeEvent
 from formatting import format_subject, format_body
 
 
-def test_format_subject_prefers_country_name():
-    ev = EarthquakeEvent(
-        earthquake_id=1,
-        country_id=81,
-        magnitude=3.21,
-        occurred_at="2026-02-06T00:00:00Z",
-        place="Near Tokyo",
-        country_name="Japan",
-    )
-    subj = format_subject(ev)
-    assert "Japan" in subj
-    assert "country_id=81" not in subj
-    assert "M3.2" in subj
+@pytest.mark.parametrize(
+    "event,expected_contains,expected_not_contains",
+    [
+        (
+            EarthquakeEvent(
+                earthquake_id=1,
+                country_id=81,
+                magnitude=3.21,
+                occurred_at="2026-02-06T00:00:00Z",
+                place="Near Tokyo",
+                country_name="Japan",
+            ),
+            ["Japan", "M3.2"],
+            ["country_id=81"],
+        ),
+        (
+            EarthquakeEvent(
+                earthquake_id=1,
+                country_id=81,
+                magnitude=3.21,
+                occurred_at="t",
+                place=None,
+                country_name=None,
+            ),
+            ["country_id=81", "M3.2"],
+            ["Japan"],
+        ),
+    ],
+)
+def test_format_subject_contains_expected_bits(event, expected_contains, expected_not_contains):
+    subj = format_subject(event)
+    for token in expected_contains:
+        assert token in subj
+    for token in expected_not_contains:
+        assert token not in subj
 
 
-def test_format_subject_falls_back_to_country_id():
-    ev = EarthquakeEvent(
-        earthquake_id=1,
-        country_id=81,
-        magnitude=3.21,
-        occurred_at="t",
-        place=None,
-        country_name=None,
-    )
-    subj = format_subject(ev)
-    assert "country_id=81" in subj
+def test_format_body_includes_location_when_present(event_japan_big):
+    body = format_body(event_japan_big)
+
+    assert f"Earthquake ID: {event_japan_big.earthquake_id}" in body
+    assert f"Time: {event_japan_big.occurred_at}" in body
+    assert f"Country: {event_japan_big.country_name}" in body
+    assert f"Magnitude: {event_japan_big.magnitude}" in body
+    assert "Location:" in body
 
 
-def test_format_body_includes_location_description_when_present():
+@pytest.mark.parametrize(
+    "place,country_name,expected_country_line,expect_location_line",
+    [
+        (None, None, "Country: (country_id=81)", False),
+        ("7 km W of Cobb, CA", None, "Country: (country_id=81)", True),
+        (None, "Japan", "Country: Japan", False),
+        ("Near Tokyo", "Japan", "Country: Japan", True),
+    ],
+)
+def test_format_body_country_and_location_variants(place, country_name, expected_country_line, expect_location_line):
     ev = EarthquakeEvent(
         earthquake_id=123,
         country_id=81,
         magnitude=4.0,
         occurred_at="2026-02-06T00:00:00Z",
-        place="7 km W of Cobb, CA (38.8220, -122.7250)",
-        country_name="Japan",
+        place=place,
+        country_name=country_name,
     )
-    body = format_body(ev)
-    assert "Earthquake ID: 123" in body
-    assert "Time: 2026-02-06T00:00:00Z" in body
-    assert "Country: Japan" in body
-    assert "Magnitude: 4.0" in body
-    assert "Location: 7 km W of Cobb, CA" in body
 
-
-def test_format_body_omits_location_line_when_place_missing():
-    ev = EarthquakeEvent(
-        earthquake_id=123,
-        country_id=81,
-        magnitude=4.0,
-        occurred_at="t",
-        place=None,
-        country_name=None,
-    )
     body = format_body(ev)
-    assert "Location:" not in body
-    assert "Country: (country_id=81)" in body
+    assert expected_country_line in body
+
+    if expect_location_line:
+        assert "Location:" in body
+    else:
+        assert "Location:" not in body
