@@ -8,7 +8,9 @@ from components.filters import timeframe_selector
 from data.load import load_earthquakes
 from visuals.analytics import CHARTS
 
-with open("styles.css") as f:
+style_sheet = os.path.join(os.path.dirname(__file__),
+                            "../styles.css")
+with open(str(style_sheet)) as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 
