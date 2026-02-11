@@ -20,6 +20,7 @@ def magnitude_distribution(df: pd.DataFrame) -> None:
     st.altair_chart(chart, use_container_width=True)
 
 
+@st.cache_resource(ttl=120)
 def depth_distribution(df: pd.DataFrame) -> None:
     """Graph showing depth distribution"""
     st.markdown("### Depth distribution")
@@ -39,6 +40,7 @@ def depth_distribution(df: pd.DataFrame) -> None:
     st.altair_chart(chart, use_container_width=True)
 
 
+@st.cache_resource(ttl=120)
 def depth_vs_magnitude(df: pd.DataFrame) -> None:
     """Graph showing Depth against magnitude"""
     st.markdown("### Depth vs Magnitude")
@@ -61,6 +63,7 @@ def depth_vs_magnitude(df: pd.DataFrame) -> None:
     st.altair_chart(chart, use_container_width=True)
 
 
+@st.cache_resource(ttl=120)
 def render_earthquakes_over_time(df: pd.DataFrame) -> None:
     """Renders an earthquake over time graph."""
     st.markdown("#### Earthquakes over time")
@@ -97,6 +100,7 @@ def render_earthquakes_over_time(df: pd.DataFrame) -> None:
     st.altair_chart(chart, use_container_width=True)
 
 
+@st.cache_resource(ttl=120)
 def render_top_countries(df: pd.DataFrame, top_n: int = 10) -> None:
     """Renders a top countries with earthquakes chart."""
     st.markdown("#### Top affected countries")

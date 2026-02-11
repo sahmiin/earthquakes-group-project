@@ -4,6 +4,7 @@ import streamlit as st
 import altair as alt
 
 
+@st.cache_resource(ttl=120)
 def render_magnitude_distribution(df: pd.DataFrame) -> None:
     """Renders a magnitude distribution graph."""
     st.markdown("#### Magnitude distribution")

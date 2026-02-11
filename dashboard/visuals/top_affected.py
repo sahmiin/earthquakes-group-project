@@ -4,6 +4,7 @@ import streamlit as st
 import altair as alt
 
 
+@st.cache_resource(ttl=120)
 def render_top_countries(df: pd.DataFrame, top_n: int = 10) -> None:
     """Renders a top countries with earthquakes chart."""
     st.markdown("#### Top affected countries")

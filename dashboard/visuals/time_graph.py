@@ -4,6 +4,7 @@ import streamlit as st
 import altair as alt
 
 
+@st.cache_resource(ttl=120)
 def render_earthquakes_over_time(df: pd.DataFrame) -> None:
     """Renders an earthquake over time graph."""
     st.markdown("#### Earthquakes over time")
