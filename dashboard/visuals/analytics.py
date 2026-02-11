@@ -3,6 +3,7 @@ import pandas as pd
 import altair as alt
 
 
+@st.cache_resource(ttl=120)
 def magnitude_distribution(df: pd.DataFrame) -> None:
     """Graph showing magnitude distribution"""
     st.markdown("### Magnitude distribution")
@@ -20,6 +21,7 @@ def magnitude_distribution(df: pd.DataFrame) -> None:
 
 
 def depth_distribution(df: pd.DataFrame) -> None:
+    """Graph showing depth distribution"""
     st.markdown("### Depth distribution")
 
     d = df.copy()
