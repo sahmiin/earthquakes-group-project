@@ -4,6 +4,7 @@ import altair as alt
 
 
 def magnitude_distribution(df: pd.DataFrame) -> None:
+    """Graph showing magnitude distribution"""
     st.markdown("### Magnitude distribution")
 
     chart = (
@@ -22,10 +23,10 @@ def depth_distribution(df: pd.DataFrame) -> None:
     st.markdown("### Depth distribution")
 
     d = df.copy()
-    d["depth"] = pd.to_numeric(d["depth"], errors="coerce")  # ✅
+    d["depth"] = pd.to_numeric(d["depth"], errors="coerce")
 
     chart = (
-        alt.Chart(d.dropna(subset=["depth"]))  # ✅
+        alt.Chart(d.dropna(subset=["depth"]))
         .mark_bar()
         .encode(
             x=alt.X("depth:Q", bin=alt.Bin(
@@ -37,16 +38,17 @@ def depth_distribution(df: pd.DataFrame) -> None:
 
 
 def depth_vs_magnitude(df: pd.DataFrame) -> None:
+    """Graph showing Depth against magnitude"""
     st.markdown("### Depth vs Magnitude")
 
     d = df.copy()
     d["depth"] = pd.to_numeric(
-        d["depth"], errors="coerce")        # ✅
+        d["depth"], errors="coerce")
     d["magnitude_value"] = pd.to_numeric(
-        d["magnitude_value"], errors="coerce")  # ✅
+        d["magnitude_value"], errors="coerce")
 
     chart = (
-        alt.Chart(d.dropna(subset=["depth", "magnitude_value"]))  # ✅
+        alt.Chart(d.dropna(subset=["depth", "magnitude_value"]))
         .mark_circle(opacity=0.5)
         .encode(
             x=alt.X("magnitude_value:Q", title="Magnitude"),
