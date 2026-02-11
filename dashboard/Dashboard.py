@@ -11,9 +11,6 @@ from components.earthquake_map import render_quake_map
 from data.load import load_earthquakes
 from data.metrics_calculations import (
     total_quakes, max_magnitude, average_magnitude, deepest, shallowest, countries_affected,)
-from visuals.time_graph import render_earthquakes_over_time
-from visuals.distributions import render_magnitude_distribution
-from visuals.top_affected import render_top_countries
 
 
 def tremor_theme():

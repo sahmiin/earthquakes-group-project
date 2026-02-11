@@ -3,7 +3,9 @@ import pandas as pd
 import altair as alt
 
 
+@st.cache_resource(ttl=120)
 def magnitude_distribution(df: pd.DataFrame) -> None:
+    """Graph showing magnitude distribution"""
     st.markdown("### Magnitude distribution")
 
     chart = (
@@ -18,14 +20,16 @@ def magnitude_distribution(df: pd.DataFrame) -> None:
     st.altair_chart(chart, use_container_width=True)
 
 
+@st.cache_resource(ttl=120)
 def depth_distribution(df: pd.DataFrame) -> None:
+    """Graph showing depth distribution"""
     st.markdown("### Depth distribution")
 
     d = df.copy()
-    d["depth"] = pd.to_numeric(d["depth"], errors="coerce")  # ✅
+    d["depth"] = pd.to_numeric(d["depth"], errors="coerce")
 
     chart = (
-        alt.Chart(d.dropna(subset=["depth"]))  # ✅
+        alt.Chart(d.dropna(subset=["depth"]))
         .mark_bar()
         .encode(
             x=alt.X("depth:Q", bin=alt.Bin(
@@ -36,17 +40,19 @@ def depth_distribution(df: pd.DataFrame) -> None:
     st.altair_chart(chart, use_container_width=True)
 
 
+@st.cache_resource(ttl=120)
 def depth_vs_magnitude(df: pd.DataFrame) -> None:
+    """Graph showing Depth against magnitude"""
     st.markdown("### Depth vs Magnitude")
 
     d = df.copy()
     d["depth"] = pd.to_numeric(
-        d["depth"], errors="coerce")        # ✅
+        d["depth"], errors="coerce")
     d["magnitude_value"] = pd.to_numeric(
-        d["magnitude_value"], errors="coerce")  # ✅
+        d["magnitude_value"], errors="coerce")
 
     chart = (
-        alt.Chart(d.dropna(subset=["depth", "magnitude_value"]))  # ✅
+        alt.Chart(d.dropna(subset=["depth", "magnitude_value"]))
         .mark_circle(opacity=0.5)
         .encode(
             x=alt.X("magnitude_value:Q", title="Magnitude"),
@@ -57,6 +63,7 @@ def depth_vs_magnitude(df: pd.DataFrame) -> None:
     st.altair_chart(chart, use_container_width=True)
 
 
+@st.cache_resource(ttl=120)
 def render_earthquakes_over_time(df: pd.DataFrame) -> None:
     """Renders an earthquake over time graph."""
     st.markdown("#### Earthquakes over time")
@@ -93,6 +100,7 @@ def render_earthquakes_over_time(df: pd.DataFrame) -> None:
     st.altair_chart(chart, use_container_width=True)
 
 
+@st.cache_resource(ttl=120)
 def render_top_countries(df: pd.DataFrame, top_n: int = 10) -> None:
     """Renders a top countries with earthquakes chart."""
     st.markdown("#### Top affected countries")
