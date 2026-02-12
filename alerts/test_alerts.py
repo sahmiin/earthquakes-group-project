@@ -1,5 +1,5 @@
 """Testing suite for alert scripts"""
-
+# pylint: skip-file
 
 import json
 from datetime import datetime, timezone

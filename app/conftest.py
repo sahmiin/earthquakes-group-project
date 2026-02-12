@@ -1,5 +1,5 @@
 """This script contains fixtures for testing the API script."""
-
+# pylint: skip-file
 import pytest
 from unittest.mock import MagicMock
 from app import app

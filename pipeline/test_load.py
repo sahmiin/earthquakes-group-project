@@ -1,10 +1,11 @@
 """Test script with pytest for the load script"""
 
-# pylint:skip-file
+# pylint: skip-file
 
 import pytest
 
 from load import get_magnitude_type_id, get_location_id, upload_data
+
 
 def test_get_magnitude_type_id_maps_value(mocker, test_earthquake_data):
     conn = mocker.MagicMock()
@@ -13,12 +14,14 @@ def test_get_magnitude_type_id_maps_value(mocker, test_earthquake_data):
     result = get_magnitude_type_id(conn, test_earthquake_data)
     assert result[0]["magnitude_type_id"] == 1
 
+
 def test_get_magnitude_type_id_empty_events(mocker):
     conn = mocker.MagicMock()
     cur = conn.cursor.return_value.__enter__.return_value
     cur.fetchall.return_value = []
     result = get_magnitude_type_id(conn, [])
     assert result == []
+
 
 def test_get_location_id_uses_existing_country(mocker, test_earthquake_data):
     conn = mocker.MagicMock()
@@ -31,6 +34,7 @@ def test_get_location_id_uses_existing_country(mocker, test_earthquake_data):
     mocker.patch("load.ENV", {"API_KEY": "fake-key"})
     result = get_location_id(conn, test_earthquake_data)
     assert result[0]["country_id"] == 1
+
 
 def test_get_location_id_defaults_to_iw(mocker, test_earthquake_data):
     conn = mocker.MagicMock()
@@ -48,6 +52,7 @@ def test_get_location_id_defaults_to_iw(mocker, test_earthquake_data):
     result = get_location_id(conn, test_earthquake_data)
     assert result[0]["country_id"] == 999
 
+
 def test_upload_data_executes_and_commits(mocker, test_earthquake_data):
     conn = mocker.MagicMock()
     cur = conn.cursor.return_value.__enter__.return_value
@@ -58,12 +63,14 @@ def test_upload_data_executes_and_commits(mocker, test_earthquake_data):
     assert "INSERT INTO event" in sql
     assert data == test_earthquake_data
 
+
 def test_upload_data_with_empty_events(mocker):
     conn = mocker.MagicMock()
     cur = conn.cursor.return_value.__enter__.return_value
     upload_data(conn, [])
     cur.executemany.assert_called_once()
     conn.commit.assert_called_once()
+
 
 def test_upload_data_does_not_commit_on_error(mocker, test_earthquake_data):
     conn = mocker.MagicMock()
@@ -72,5 +79,3 @@ def test_upload_data_does_not_commit_on_error(mocker, test_earthquake_data):
     with pytest.raises(Exception):
         upload_data(conn, test_earthquake_data)
     conn.commit.assert_not_called()
-
-

@@ -1,5 +1,5 @@
 """This script contains fixtures to be used across all tests in this directory."""
-
+# pylint: skip-file
 import os
 import tempfile
 from unittest.mock import MagicMock

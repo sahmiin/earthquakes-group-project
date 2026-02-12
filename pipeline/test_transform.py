@@ -2,7 +2,7 @@
 
 import pandas as pd
 from transform import build_dataframe, convert_datatypes, drop_outliers
-# pylint:skip-file
+# pylint: skip-file
 
 
 def test_build_dataframe_valid_columns(test_earthquake_data):

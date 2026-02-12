@@ -1,5 +1,5 @@
 """This script will be small, relatively simple tests for the API."""
-
+# pylint: skip-file
 from unittest.mock import patch
 
 from psycopg2 import Error
@@ -26,10 +26,6 @@ def test_index_returns_earthquake(connect_mock, client, earthquake_data, mock_db
     assert response.json == [[earthquake_data]]
 
 
-from psycopg2 import Error
-from unittest.mock import patch
-
-
 @patch("app.connect")
 def test_index_db_error_during_query(connect_mock, client, mock_db):
     mock_conn, mock_cursor = mock_db([])
@@ -41,7 +37,6 @@ def test_index_db_error_during_query(connect_mock, client, mock_db):
 
     assert response.status_code == 500
     assert "SQL error" in response.json["error"]
-
 
 
 @patch("app.connect")
@@ -64,7 +59,7 @@ def test_get_earthquakes_in_country_found(connect_mock, client, earthquake_data,
     mock_conn, mock_cursor = mock_db([earthquake_data])
     connect_mock.return_value = mock_conn
 
-    response= client.get('/America')
+    response = client.get('/America')
     assert response.status_code == 200
     data = response.get_json()
     assert data == earthquake_data
@@ -76,7 +71,7 @@ def test_get_earthquakes_in_country_not_found(connect_mock, client, mock_db):
     mock_conn, mock_cursor = mock_db([])
     connect_mock.return_value = mock_conn
 
-    response= client.get('/England')
+    response = client.get('/England')
     assert response.status_code == 404
     assert response.get_json() == {"error": "No recent earthquakes here."}
     mock_cursor.execute.assert_called_once()
@@ -88,7 +83,7 @@ def test_get_earthquakes_of_certain_magnitude(connect_mock, client, earthquake_r
     connect_mock.return_value = mock_conn
 
     mag = earthquake_row['magnitude_value']
-    response= client.get(f'/magnitude/{mag}')
+    response = client.get(f'/magnitude/{mag}')
     assert response.status_code == 200
     data = response.get_json()
     assert data == [earthquake_row]
@@ -100,7 +95,7 @@ def test_get_earthquakes_of_certain_magnitude_invalid(connect_mock, client, mock
     mock_conn, mock_cursor = mock_db([])
     connect_mock.return_value = mock_conn
 
-    response= client.get('/magnitude/16.0')
+    response = client.get('/magnitude/16.0')
     assert response.status_code == 500
     assert response.get_json() == {"error": "Invalid magnitude value."}
 
@@ -110,13 +105,13 @@ def test_get_earthquakes_ordered_by_magnitude(connect_mock, client, earthquake_d
     mock_conn, mock_cursor = mock_db(earthquake_data)
     connect_mock.return_value = mock_conn
 
-    response= client.get('/magnitude/desc')
+    response = client.get('/magnitude/desc')
     assert response.status_code == 200
     data = response.get_json()
 
     assert len(data) == len(earthquake_data)
-    assert all(d['magnitude_value'] >= data[i+1]['magnitude_value'] 
-                for i, d in enumerate(data[:-1]))
+    assert all(d['magnitude_value'] >= data[i+1]['magnitude_value']
+               for i, d in enumerate(data[:-1]))
     mock_cursor.execute.assert_called_once()
 
 
@@ -125,6 +120,6 @@ def test_get_earthquakes_ordered_by_magnitude_invalid(connect_mock, client, mock
     mock_conn, mock_cursor = mock_db([])
     connect_mock.return_value = mock_conn
 
-    response= client.get('/magnitude/sideways')
+    response = client.get('/magnitude/sideways')
     assert response.status_code == 400
     assert response.get_json() == {"error": "Invalid order direction."}

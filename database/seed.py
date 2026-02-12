@@ -76,6 +76,7 @@ def seed_magnitude_types(conn: connection) -> None:
         ("mwb",),
         ("mwr",),
         ("mint",),
+        ("mlr"),
     ]
 
     sql = """
