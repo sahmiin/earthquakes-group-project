@@ -1,3 +1,5 @@
+"""Load script to upload transformed data into database"""
+
 from os import environ as ENV, _Environ
 from dotenv import load_dotenv
 import psycopg2
@@ -32,7 +34,7 @@ def get_location_id(conn, new_events):
     """Uses a geolocation API to return the country code for a given lat and lon"""
     if not new_events:
         return []
-    
+
     with conn.cursor() as cur:
         cur.execute("SELECT country_code, country_id FROM country;")
         country_codes_lookup = dict(cur.fetchall())
@@ -58,7 +60,7 @@ def upload_data(conn, new_events):
     """SQL query to add all events to DB"""
     if not new_events:
         return
-    
+
     upsert_query = """
     INSERT INTO event (usgs_event_id, start_time, description, 
     creation_time, depth, depth_uncertainty, used_phase_count, used_station_count, 
@@ -120,9 +122,9 @@ def filter_new_events(conn, events):
     """Return only events not already in the database"""
     if not events:
         return []
-    
+
     event_ids = [e["usgs_event_id"] for e in events]
-    
+
     with conn.cursor() as cur:
         cur.execute(
             """
@@ -133,7 +135,7 @@ def filter_new_events(conn, events):
             (event_ids,)
         )
         existing_ids = {row[0] for row in cur.fetchall()}
-    
+
     return [e for e in events if e["usgs_event_id"] not in existing_ids]
 
 
@@ -150,7 +152,3 @@ def run_load_script(events: list[dict]):
         upload_data(conn, events_location_id)
     finally:
         conn.close()
-
-
-if __name__ == "__main__":
-    run_load_script()
