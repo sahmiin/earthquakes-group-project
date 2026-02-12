@@ -22,11 +22,11 @@ jobs:
             uses: actions/setup-python@v6
           - name: "Install libraries"
             run: pip install -r alerts/requirements.txt \ 
-                  pip install -r app/requirements.txt \ 
-                  pip install -r dashboard/requirements.txt \ 
-                  pip install -r database/requirements.txt \ 
-                  pip install -r pipeline/requirements.txt \
-                  pip install -r weekly_report/requirements.txt
+                  app/requirements.txt \ 
+                  dashboard/requirements.txt \ 
+                  database/requirements.txt \
+                  pipeline/requirements.txt \
+                  weekly_report/requirements.txt
           - name: "Run tests"
             run: pytest alerts/*.py
     pylinting_alerts:
