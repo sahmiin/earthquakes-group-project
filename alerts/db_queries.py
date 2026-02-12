@@ -1,5 +1,7 @@
 """Script containing DB connection and queries"""
 from __future__ import annotations
+from classes import EarthquakeEvent
+from psycopg2.extensions import connection as Connection
 
 from os import environ as ENV
 
@@ -8,7 +10,7 @@ from psycopg2 import connect
 from classes import Subscriber
 
 
-def get_pg_connection() -> connect.Connection:
+def get_pg_connection() -> Connection:
     """Returns a connection to RDS."""
     return connect(
         host=ENV["HOST_NAME"],
@@ -20,7 +22,7 @@ def get_pg_connection() -> connect.Connection:
     )
 
 
-def fetch_subscribers(conn: connect.Connection) -> list[Subscriber]:
+def fetch_subscribers(conn: Connection) -> list[Subscriber]:
     """
     Returns a list of subscribers.
     """
@@ -66,7 +68,7 @@ def fetch_subscribers(conn: connect.Connection) -> list[Subscriber]:
     return subs
 
 
-def fetch_country_name(conn: connect.Connection, country_id: int) -> str:
+def fetch_country_name(conn: Connection, country_id: int) -> str:
     """Fetches country name by ID from earthquakes.country."""
     query = """
         SELECT country_name
@@ -81,3 +83,52 @@ def fetch_country_name(conn: connect.Connection, country_id: int) -> str:
     if not row:
         return None
     return str(row[0]) if row[0] is not None else None
+
+
+def fetch_recent_earthquakes(conn: Connection) -> list[EarthquakeEvent]:
+    """
+    Fetch earthquakes from the last N minutes.
+    """
+    query = """
+        SELECT
+            event_id,
+            country_id,
+            magnitude_value,
+            creation_time,
+            description,
+            longitude,
+            latitude
+        FROM public.event
+        WHERE creation_time >= (NOW() AT TIME ZONE 'utc') - INTERVAL '5 MINUTES'
+        ORDER BY creation_time ASC;
+    """
+
+    with conn.cursor() as cur:
+        cur.execute(query)
+        rows = cur.fetchall()
+
+    events: list[EarthquakeEvent] = []
+    for event_id, country_id, magnitude_value, creation_time, description, longitude, latitude in rows:
+
+        place_parts = []
+        if description:
+            place_parts.append(str(description))
+        if latitude is not None and longitude is not None:
+            place_parts.append(
+                f"{float(latitude):.5f}, {float(longitude):.5f}")
+
+        place = " ".join(place_parts) if place_parts else None
+
+        events.append(
+            EarthquakeEvent(
+                earthquake_id=int(event_id),
+                country_id=int(country_id),
+                magnitude=float(magnitude_value),
+                occurred_at=creation_time.isoformat() if hasattr(
+                    creation_time, "isoformat") else str(creation_time),
+                place=place,
+                country_name=None,
+            )
+        )
+
+    return events
