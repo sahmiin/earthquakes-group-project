@@ -44,24 +44,19 @@ def convert_datatypes(df: pd.DataFrame) -> pd.DataFrame:
         df["start_time"], errors="coerce", utc=True)
     df["creation_time"] = pd.to_datetime(
         df["creation_time"], errors="coerce", utc=True)
-
-    df["latitude"] = pd.to_numeric(df["latitude"], errors="coerce")
-    df["longitude"] = pd.to_numeric(df["longitude"], errors="coerce")
-    df["depth_value"] = pd.to_numeric(df["depth_value"], errors="coerce")
-    df["depth_uncertainty"] = pd.to_numeric(
-        df["depth_uncertainty"], errors="coerce")
-    df["magnitude_value"] = pd.to_numeric(
-        df["magnitude_value"], errors="coerce")
-    df["magnitude_uncertainty"] = pd.to_numeric(
-        df["magnitude_uncertainty"], errors="coerce")
-    df["used_phase_count"] = pd.to_numeric(
-        df["used_phase_count"], errors="coerce").round().astype("Int64")
-    df["used_station_count"] = pd.to_numeric(
-        df["used_station_count"], errors="coerce").round().astype("Int64")
-    df["azimuthal_gap"] = (
-        pd.to_numeric(df["azimuthal_gap"], errors="coerce")
-        .round()
-        .astype("Int64"))
+    
+    numeric_columns = [
+        "latitude", "longitude", "depth_value", "depth_uncertainty",
+        "magnitude_value", "magnitude_uncertainty"
+    ]
+    for col in numeric_columns:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+    
+    int_cols= ["used_phase_count", "used_station_count", "azimuthal_gap"]
+    for col in int_cols:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+        df[col] = df[col].round()
+        df[col] = df[col].astype("Int64")
 
     return df
 
