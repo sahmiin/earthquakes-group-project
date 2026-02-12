@@ -54,8 +54,3 @@ def save_data(data):
     """Saves the extracted information to a json file as a list of dictionaries"""
     with open("earthquakes.json", "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
-
-
-if __name__ == "__main__":
-    event_data = extract_data()
-    save_data(event_data)
