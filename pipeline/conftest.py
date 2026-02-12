@@ -1,7 +1,7 @@
 import pytest
 from bs4 import BeautifulSoup
 
-# pylint:skip-file
+# pylint: skip-file
 
 
 @pytest.fixture
@@ -63,11 +63,13 @@ XML = """<event catalog:eventid="us7000xyzabc" publicID="quakeml:us.anss.org/eve
         <azimuthalGap>180</azimuthalGap>
     </quality>
     </event>
-    """ 
+    """
+
 
 @pytest.fixture
-def valid_event(): 
+def valid_event():
     return BeautifulSoup(XML, "lxml-xml").event
+
 
 @pytest.fixture
 def event_missing_value():

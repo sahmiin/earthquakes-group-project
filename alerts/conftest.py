@@ -1,4 +1,5 @@
 """Testing suite for the alerts functions"""
+# pylint: skip-file
 from __future__ import annotations
 from dataclasses import dataclass
 import pytest

@@ -1,10 +1,11 @@
 """This script contains simple tests for the SES helper functions."""
-
+# pylint: skip-file
 from email.message import EmailMessage
 from unittest.mock import patch
 
 import ses_helper
 from ses_helper import SES_CLIENT, SENDER, create_main_message, send_report_email
+
 
 def test_create_main_message_no_subscribers(caplog):
     """Tests edge-case of no subscribers in database when trying to send an email."""

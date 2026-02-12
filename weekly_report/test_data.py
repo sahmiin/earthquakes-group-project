@@ -1,5 +1,5 @@
 """This script contains tests for the data-related helper functions."""
-
+# pylint: skip-file
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
