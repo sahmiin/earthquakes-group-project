@@ -85,8 +85,9 @@ def get_all_recent_earthquakes(limit):
             connection.close()
 
 
-@app.route('/<country_name>')
-def get_earthquakes_in_country(country_name):
+@app.route('/<country_name>', defaults={'limit': 20})
+@app.route('/<country_name>/<int:limit>')
+def get_earthquakes_in_country(country_name, limit):
     """Returns recent earthquakes from a given country."""
     connection = get_db_connection()
     if not connection:
@@ -97,10 +98,13 @@ def get_earthquakes_in_country(country_name):
         cursor.execute("""
                        SELECT * FROM event e
                         JOIN country c ON (e.country_id = c.country_id) 
-                        WHERE country_name ILIKE %s;
+                        WHERE country_name ILIKE %s
+                        ORDER BY start_time DESC
+                        LIMIT %s;
                         """,
-                       (f"%{country_name}%",))
-        earthquake = cursor.fetchone()
+                       (f"%{country_name}%", limit))
+
+        earthquake = cursor.fetchall()
         if earthquake:
             return jsonify(earthquake)
         return {"error": "No recent earthquakes here."}, 404
@@ -112,8 +116,9 @@ def get_earthquakes_in_country(country_name):
             connection.close()
 
 
-@app.route('/magnitude/<string:order>')
-def get_earthquakes_ordered_by_magnitude(order):
+@app.route('/magnitude/<string:order>', defaults={'limit': 20})
+@app.route('/magnitude/<string:order>/<int:limit>')
+def get_earthquakes_ordered_by_magnitude(order, limit):
     """Returns all earthquakes in a given order of magnitude."""
     connection = get_db_connection()
     if not connection:
@@ -130,10 +135,11 @@ def get_earthquakes_ordered_by_magnitude(order):
             SELECT *
             FROM event e
             JOIN country c ON e.country_id = c.country_id
-            ORDER BY magnitude_value {order.upper()};
+            ORDER BY magnitude_value {order.upper()}
+            LIMIT %s;
         """
 
-        cursor.execute(query)
+        cursor.execute(query, (limit,))
         earthquakes = cursor.fetchall()
         return jsonify(earthquakes)
 
@@ -146,8 +152,9 @@ def get_earthquakes_ordered_by_magnitude(order):
             connection.close()
 
 
-@app.route('/magnitude/<float:mag>')
-def get_earthquakes_of_certain_magnitude(mag):
+@app.route('/magnitude/<float:mag>', defaults={'limit': 20})
+@app.route('/magnitude/<float:mag>/<int:limit>')
+def get_earthquakes_of_certain_magnitude(mag, limit):
     """Returns only earthquakes that are of the given magnitude or higher."""
     connection = get_db_connection()
     if not connection:
@@ -161,13 +168,16 @@ def get_earthquakes_of_certain_magnitude(mag):
         cursor.execute("""
                        SELECT * FROM event e
                         JOIN country c ON (e.country_id = c.country_id) 
-                        WHERE magnitude_value >= %s;
+                        WHERE magnitude_value >= %s
+                        LIMIT %s;
                         """,
-                       (mag,))
+                       (mag, limit))
         earthquakes = cursor.fetchall()
         return jsonify(earthquakes)
+
     except Error as e:
         return {"error": str(e)}, 500
+
     finally:
         if connection:
             cursor.close()
