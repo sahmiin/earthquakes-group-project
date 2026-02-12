@@ -21,12 +21,7 @@ jobs:
           - name: "Install Python"
             uses: actions/setup-python@v6
           - name: "Install libraries"
-            run: pip install -r alerts/requirements.txt \ 
-                  -r app/requirements.txt \ 
-                  -r dashboard/requirements.txt \ 
-                  -r database/requirements.txt \
-                  -r pipeline/requirements.txt \
-                  -r weekly_report/requirements.txt
+            run: pip install -r alerts/requirements.txt -r app/requirements.txt -r dashboard/requirements.txt -r database/requirements.txt  -r pipeline/requirements.txt -r weekly_report/requirements.txt
           - name: "Run tests"
             run: pytest alerts/*.py
     pylinting_alerts:
