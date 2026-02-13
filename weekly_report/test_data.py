@@ -52,7 +52,8 @@ def test_get_top_countries(df_earthquakes):
     """Test that top affected countries are returned correctly."""
     top_countries = get_top_countries(df_earthquakes)
 
-    usa_row = top_countries[top_countries["country_name"] == "United States of America"]
+    usa_row = top_countries[top_countries["country_name"]
+                            == "United States of America"]
     japan_row = top_countries[top_countries["country_name"] == "Japan"]
 
     assert usa_row["quake_count"].values[0] == 3

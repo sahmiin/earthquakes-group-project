@@ -245,8 +245,14 @@ variable "weekly_report_lambda_image_uri" {
   default = ""
 }
 
-variable "alert_lambda_image_uri" {
+variable "alerts_image_uri" {
   type = string
   description = "ECR image URI for the alert Lambda"
+  default = ""
+}
+
+variable "pipeline_image_uri" {
+  type = string
+  description = "ECR image URI for the pipeline Lambda"
   default = ""
 }
