@@ -1,6 +1,4 @@
 """Earthquake map showcasing earthquakes from time period."""
-from __future__ import annotations
-
 import pydeck as pdk
 import streamlit as st
 import pandas as pd

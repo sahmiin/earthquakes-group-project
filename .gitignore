@@ -115,3 +115,6 @@ pipeline/*.json
 *.csv
 
 .coverage
+
+.streamlit/
+.toml
