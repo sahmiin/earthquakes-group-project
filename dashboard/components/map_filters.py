@@ -1,6 +1,4 @@
 """Filters for earthquake map"""
-from __future__ import annotations
-
 import pandas as pd
 import streamlit as st
 
