@@ -380,22 +380,6 @@ resource "aws_lambda_permission" "allow_eventbridge_weekly" {
   source_arn = aws_cloudwatch_event_rule.weekly_report.arn
 }
 
-# Alert Lambda
-
-resource "aws_lambda_function" "alert" {
-  count = var.enable_alert_lambda ? 1 : 0
-  function_name = "${local.name_prefix}-alert-lambda"
-  role = aws_iam_role.lambda_exec.arn
-
-  package_type = "Image"
-  image_uri = var.alert_lambda_image_uri
-
-  timeout = var.lambda_timeout
-  memory_size = var.lambda_memory_mb
-
-  tags = local.common_tags
-}
-
 #  Weekly report publishing
 
 resource "aws_iam_policy" "lambda_publish_reports" {
@@ -418,25 +402,6 @@ resource "aws_iam_policy_attachment" "lambda_publish_reports_attach" {
 }
 
 # Weekly report Lambda
-
-resource "aws_iam_role" "weekly_report_lambda_role" {
-  name = "${local.name_prefix}-weekly-report-lambda-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = "sts:AssumeRole"
-        Principal = {
-          Service = "lambda.amazonaws.com"
-        }
-      }
-    ]
-  })
-
-  tags = local.common_tags
-}
 
 resource "aws_iam_role_policy_attachment" "weekly_report_basic_execution" {
   role       = aws_iam_role.weekly_report_lambda_role.name
@@ -480,3 +445,30 @@ resource "aws_lambda_function" "weekly_report" {
 
   tags = local.common_tags
 }
+
+resource "aws_lambda_function" "alerts" {
+  function_name = "${local.name_prefix}-alerts"
+  role          = aws_iam_role.alerts_image_uri.arn
+
+  package_type = "Image"
+  image_uri    = var.alerts_image_uri
+
+  timeout     = var.lambda_timeout
+  memory_size = var.lambda_memory_mb
+
+  tags = local.common_tags
+}
+
+resource "aws_lambda_function" "pipeline_lambda" {
+  function_name = "${local.name_prefix}-pipeline"
+  role          = aws.pipeline_image_uri.arn
+
+  package_type = "Image"
+  image_uri    = var.pipeline_image_uri
+
+  timeout     = var.lambda_timeout
+  memory_size = var.lambda_memory_mb
+
+  tags = local.common_tags
+}
+
