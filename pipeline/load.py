@@ -45,6 +45,9 @@ def get_location_id(conn, new_events):
 
     for e in new_events:
         result = geocoder.reverse_geocode(e["latitude"], e["longitude"])
+        if not result:
+            e["country_id"] = country_codes_lookup["IW"]
+            continue
         components = result[0].get("components", {})
         country_code = components.get("country_code")
 
