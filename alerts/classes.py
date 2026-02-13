@@ -1,8 +1,4 @@
 """Python script containing the construction of the data classes"""
-
-
-from __future__ import annotations
-
 from dataclasses import dataclass
 
 # Organising data
@@ -10,6 +6,7 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class Subscriber:
+    """Defines class structure for a Subscriber object"""
     subscriber_id: int
     subscriber_name: str
     subscriber_email: str
@@ -20,6 +17,7 @@ class Subscriber:
 
 @dataclass(frozen=True)
 class EarthquakeEvent:
+    """Defines class structure for an Earthquake object"""
     earthquake_id: int
     country_id: int
     magnitude: float

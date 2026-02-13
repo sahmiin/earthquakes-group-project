@@ -1,7 +1,4 @@
 """Python script containing the logic for matching subscriber preferences"""
-
-from __future__ import annotations
-
 from classes import Subscriber, EarthquakeEvent
 
 
