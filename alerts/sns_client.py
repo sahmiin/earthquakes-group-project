@@ -1,6 +1,4 @@
 """Handles connection to SNS subscription group, builds filters"""
-from __future__ import annotations
-
 import json
 
 import boto3

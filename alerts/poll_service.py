@@ -1,6 +1,4 @@
 """Scheduled polling alert service"""
-from __future__ import annotations
-
 from dataclasses import replace
 
 from db_queries import fetch_subscribers, fetch_country_name, fetch_recent_earthquakes

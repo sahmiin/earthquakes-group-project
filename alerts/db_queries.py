@@ -1,13 +1,10 @@
 """Script containing DB connection and queries"""
-from __future__ import annotations
-from classes import EarthquakeEvent
-from psycopg2.extensions import connection as Connection
-
 from os import environ as ENV
 
 from psycopg2 import connect
+from psycopg2.extensions import connection as Connection
 
-from classes import Subscriber
+from classes import EarthquakeEvent, Subscriber
 
 
 def get_pg_connection() -> Connection:

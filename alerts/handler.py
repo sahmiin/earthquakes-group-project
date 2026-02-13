@@ -30,6 +30,7 @@ def lambda_handler(event, context):
                 subscribe_every_time=subscribe_every_time,
             )
     except Exception as e:
-        return {"statusCode": 500, "body": json.dumps({"message": "Internal error", "error": str(e)})}
+        return {"statusCode": 500,
+                "body": json.dumps({"message": "Internal error", "error": str(e)})}
 
     return {"statusCode": 200, "body": json.dumps(result)}
